@@ -7,527 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-
-  :root{
-    --lav-bg:#EBEFF3; --lav-ink:#231F20; --lav-accent:#343DD5; --lav-circle:#EE74EE;
-    --good:#C6E980; --good-bg:#eef7d8; --good-text:#4b6b16;
-    --bad:#c0392b;
-    --r-lg:32px; --r-md:20px; --r-sm:14px; --r-pill:999px;
-    --pad:clamp(24px, 7vw, 100px);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    font-family:'Montserrat',system-ui,-apple-system,sans-serif;
-    color:var(--lav-ink); background:var(--lav-bg);
-    -webkit-font-smoothing:antialiased; line-height:1.45; overflow-x:hidden;
-  }
-  button{font-family:inherit;}
-  .app{max-width:1600px;margin:0 auto;min-height:100vh;position:relative;padding:0 var(--pad);}
-  .screen{display:none; padding:32px 0 80px;}
-  .screen.active{display:block;}
-  .screen-neutral{background:var(--lav-bg);}
-
-  #screen-home,#screen-how{padding:clamp(14px,2.6vh,26px) 0 clamp(28px,4.5vh,56px);}
-  #screen-home .topbar,#screen-how .topbar{margin-bottom:clamp(16px,3.5vh,35px);}
-
-  .deco-circle{position:absolute; border-radius:50%; border:6px solid var(--lav-circle); opacity:.39; pointer-events:none; z-index:0;}
-  .deco-fill{background:var(--lav-accent); border:none;}
-
-  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:44px; gap:12px; flex-wrap:wrap; position:relative; z-index:1;}
-  .brand{font-weight:600; font-size:clamp(16px,2.24vw,32px); letter-spacing:-0.01em; color:#000;}
-  .brand.small{font-weight:700; font-size:17px;}
-  .topnav{display:flex; align-items:center; gap:clamp(12px,1.6vw,22px); font-size:clamp(12px,2vw,29px); flex-wrap:wrap;}
-  .topnav a{color:var(--lav-accent); text-decoration:none; font-weight:500; cursor:pointer;}
-  .topnav a.underline{text-decoration:underline;}
-  .caps-note{color:var(--lav-accent); opacity:1; font-weight:500;}
-  .lang-pill{border:1.5px solid var(--lav-accent); background:#FBC7FB; color:var(--lav-accent); border-radius:var(--r-pill); padding:3px 14px; font-size:clamp(10px,1.33vw,19px); font-weight:500;}
-  .menu-btn{
-    width:clamp(24px,2.56vw,37px); height:clamp(45px,5.12vw,74px);
-    border:clamp(2px,0.28vw,4px) solid var(--lav-accent); border-radius:50%;
-    display:flex; align-items:center; justify-content:center; background:var(--lav-bg);
-  }
-  .menu-btn svg{width:60%; height:auto;}
-
-  .back-link{font-size:15px; text-decoration:none; color:var(--region-button, var(--lav-accent)); border-bottom:1.5px solid currentColor; padding-bottom:2px; cursor:pointer; font-weight:600;}
-  .badge-circle{
-    position:relative;
-    width:clamp(50px,7.6vw,112px); height:clamp(46px,7vw,100px); border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:clamp(11px,1.8vw,26px); font-weight:600; color:var(--region-button, var(--lav-ink));
-    flex:none;
-  }
-  .badge-circle::before{
-    content:''; position:absolute; inset:0; border-radius:50%;
-    border:3px solid var(--region-accent, var(--lav-circle)); opacity:.39;
-  }
-  .meta-col{display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
-  .timer-row{display:flex; align-items:center; gap:5px; font-size:14px; color:var(--region-accent, var(--lav-accent)); font-weight:700; font-variant-numeric:tabular-nums;}
-  .timer-row svg{width:14px; height:14px;}
-
-  h1{font-size:clamp(26px,5vw,42px); font-weight:800; line-height:1.12; letter-spacing:-0.01em; margin:0 0 14px; position:relative; z-index:1;}
-  .heading-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
-  .heading-row h1, .heading-row h2{margin-bottom:14px;}
-  .heading-mascot{width:110px; flex:none; margin-bottom:14px;}
-  h1 .native{color:var(--region-heading, var(--region-accent)); display:inline-block; margin-left:clamp(10px,1.4vw,24px);}
-  h2{font-size:clamp(22px,4vw,32px); font-weight:800; line-height:1.18; margin:0 0 8px;}
-  .lede{font-size:16px; color:var(--lav-ink); opacity:.75; max-width:560px; margin:0 0 26px; position:relative; z-index:1;}
-  .lede b{opacity:1;}
-
-  /* ========== ГЛАВНАЯ ========== */
-  .home-hero{display:flex; align-items:center; gap:clamp(16px,3.2vw,48px); position:relative; z-index:1;}
-  .home-title{
-    flex:1; margin:0; color:#000;
-    font-size:clamp(30px,5.33vw,77px); line-height:1.22; font-weight:800; letter-spacing:-0.01em;
-  }
-  .home-mascot-wrap{
-    position:relative; flex:none;
-    width:clamp(176px,25.2vw,363px); aspect-ratio:1/1;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .home-mascot-wrap::before{
-    content:''; position:absolute; inset:0; border-radius:50%;
-    border:6px solid var(--lav-circle); opacity:.39;
-  }
-  .home-mascot-wrap .heading-mascot{width:58%; margin:0;}
-  .pill-row{display:flex; gap:clamp(8px,1.5vw,22px); flex-wrap:wrap; margin-top:clamp(19px,3.6vh,45px); position:relative; z-index:1;}
-  .pill{
-    border:1px solid var(--lav-accent); border-radius:var(--r-pill);
-    padding:clamp(8px,1.24vw,18px) clamp(19px,2.72vw,38px);
-    font-size:clamp(13px,2.24vw,32px); font-weight:400; background:transparent;
-    cursor:pointer; color:var(--lav-accent); transition:background .15s ease;
-  }
-  .pill:hover{background:#DADCF2;}
-  .hero-sub{
-    color:var(--lav-accent); opacity:1; font-weight:500;
-    font-size:clamp(11px,1.33vw,19px); margin-top:clamp(13px,2.4vh,27px);
-    max-width:800px; position:relative; z-index:1;
-  }
-
-  /* ========== КАК ЭТО РАБОТАЕТ ========== */
-  .how-title-row{display:flex; align-items:center; gap:clamp(14px,2.4vw,36px); position:relative; z-index:1; flex-wrap:wrap;}
-  .how-title-row .home-title{flex:0 1 auto;}
-  .how-mascot{width:clamp(90px,12vw,174px); flex:none;}
-  .how-lede{
-    opacity:1; color:#000; font-weight:700;
-    font-size:clamp(14px,2.8vw,40px);
-    margin:clamp(6px,1.4vh,14px) 0 clamp(18px,3.6vh,40px);
-    position:relative; z-index:1;
-  }
-  .steps{margin:clamp(16px,3vh,24px) 0 clamp(18px,3.4vh,29px); position:relative; z-index:1;}
-  .steps-wrap{display:flex; align-items:stretch; gap:clamp(8px,1.4vw,20px);}
-  .step-card{
-    border:1px solid var(--lav-accent); border-radius:var(--r-lg);
-    padding:clamp(14px,2vw,28px); min-height:clamp(110px,24vh,250px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:clamp(8px,1.8vh,20px); flex:1;
-  }
-  .step-card .num{color:#959AD2; opacity:1; font-weight:700; font-size:clamp(12px,2.2vw,32px);}
-  .step-card .label{font-size:clamp(15px,3vw,44px); line-height:1.22; font-weight:700; color:var(--lav-accent); text-align:center;}
-  .step-arrow{align-self:center; color:var(--lav-ink); font-size:clamp(14px,2.4vw,34px); flex:none; opacity:1;}
-  #screen-how .row-between{margin-top:16px;}
-  .how-caps{font-size:clamp(12px,1.95vw,28px);}
-  .row-between{display:flex; align-items:center; justify-content:space-between; margin-top:20px; flex-wrap:wrap; gap:14px; position:relative; z-index:1;}
-  .cta{font-size:clamp(12px,2.24vw,32px); font-weight:400; text-decoration:underline; color:var(--region-accent, var(--lav-ink)); border-bottom:none; padding-bottom:2px; cursor:pointer; background:none; border-top:none; border-left:none; border-right:none; padding-left:0; padding-right:0;}
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    background:var(--region-button, var(--lav-accent)); color:var(--region-button-text, #fff); border:none; border-radius:var(--r-pill);
-    padding:14px 28px; font-size:15px; font-weight:700; cursor:pointer; transition:filter .15s ease;
-  }
-  .btn--rect{border-radius:var(--r-lg); font-weight:600; font-size:clamp(14px,2.4vw,36px); padding:clamp(12px,1.8vh,24px) clamp(22px,3.2vw,48px);}
-  .btn:hover{filter:brightness(1.08);}
-  .btn.hidden{display:none;}
-
-  /* ============ SCREEN 3: SELECT CULTURE ============ */
-  #screen-select{
-    padding:clamp(16px,3.2vh,32px) 0 clamp(24px,5vh,64px);
-    overflow:hidden;
-  }
-  #screen-select .topbar{margin-bottom:clamp(14px,2.6vh,32px); align-items:flex-start;}
-  #screen-select .back-link{font-weight:300; font-size:clamp(18px, min(2.8vw,4.4vh), 40px); color:var(--lav-accent);}
-  .select-badge{
-    position:relative; white-space:nowrap; font-weight:700; color:#000;
-    font-size:clamp(18px, min(3.2vw,4.4vh), 48px);
-    padding:clamp(14px,2.8vh,32px) clamp(24px,3.8vw,56px);
-    margin-top:calc(-1 * clamp(18px,3.2vh,40px));
-  }
-  .select-badge::before{
-    content:''; position:absolute; inset:0; border-radius:50%;
-    border:6px solid var(--lav-circle); opacity:.39; transform:rotate(-4deg);
-    pointer-events:none;
-  }
-  .select-hero{
-    display:flex; align-items:flex-start; gap:clamp(20px, 4vw, 48px);
-    margin-top:clamp(10px,2vh,28px); position:relative; z-index:1;
-  }
-  .select-title{
-    font-size:clamp(28px, min(6.5vw,9.6vh), 96px); font-weight:800; line-height:1.17;
-    color:#000; margin:0; flex:1; letter-spacing:-0.01em;
-  }
-  .select-mascots{width:clamp(170px, min(28vw,26vh), 360px); flex:none;}
-  .select-subtitle{
-    font-size:clamp(16px, min(2.8vw,3.6vh), 40px); font-weight:700; color:#000;
-    margin:clamp(10px,2vh,24px) 0 clamp(14px,2.6vh,32px);
-    position:relative; z-index:1;
-  }
-  .select-all{
-    display:inline-block; margin-top:clamp(14px,2.6vh,36px);
-    font-size:clamp(16px, min(2.2vw,3.2vh), 36px); font-weight:500;
-    color:var(--lav-accent); text-decoration:underline;
-    cursor:pointer; position:relative; z-index:1; background:none; border:none; padding:0;
-  }
-  .culture-grid{
-    display:grid; grid-template-columns:repeat(4, 1fr);
-    gap:clamp(12px, min(2vw,2.2vh), 24px); align-items:end;
-    margin:0; max-width:1240px; position:relative; z-index:1;
-  }
-  .culture-card{
-    display:flex; flex-direction:column; align-items:center;
-    gap:clamp(8px,1.4vh,20px); cursor:pointer;
-    background:none; border:none; padding:0; font-family:inherit;
-    transition:transform .2s ease;
-  }
-  .culture-thumb{
-    width:100%; aspect-ratio:296/231;
-    border-radius:32px; border:1px solid var(--lav-accent);
-    background-color:#fff;
-    background-size:cover; background-position:center top; background-repeat:no-repeat;
-    transition:aspect-ratio .25s ease, border-color .2s ease, box-shadow .2s ease,
-               background-size .3s ease, background-position .3s ease, background-color .2s ease;
-  }
-  .culture-thumb--tatar   {background-image:url('assets/culture-tatar.png'),   linear-gradient(165deg,#f6f1e3 0%,#dce8d6 100%);}
-  .culture-thumb--karelia {background-image:url('assets/culture-karelia.png'), linear-gradient(165deg,#f6d9d3 0%,#cfe3d4 100%);}
-  .culture-thumb--kalmykia{background-image:url('assets/culture-kalmykia.png'),linear-gradient(165deg,#f6c479 0%,#eda15c 100%);}
-  .culture-thumb--yakutia {background-image:url('assets/culture-yakutia.png'), linear-gradient(165deg,#dceef8 0%,#a9cbe8 100%);}
-  .culture-card:hover{transform:translateY(-4px);}
-  .culture-card:hover .culture-thumb{
-    aspect-ratio:296/303;
-    background-size:contain; background-position:center center;
-    background-color:#DADCF1;
-    border-color:#E975E9;
-    box-shadow:0 0 0 2px #E975E9, 0 10px 30px rgba(233,117,233,.15);
-  }
-  .culture-name{
-    font-size:clamp(14px, min(2.2vw,3vh), 36px); font-weight:400;
-    color:var(--lav-accent); transition:font-weight .2s ease;
-  }
-  .culture-card:hover .culture-name{font-weight:700;}
-  .culture-card:focus-visible .culture-thumb{outline:3px solid var(--lav-accent); outline-offset:3px;}
-
-  /* ============ SCREEN 4: CULTURE INTRO ============ */
-  #screen-intro{padding:clamp(12px,2.4vh,24px) 0 clamp(20px,4vh,48px);}
-  #screen-intro .topbar{margin-bottom:clamp(8px,1.8vh,20px);}
-  #screen-intro h1{font-size:clamp(24px, min(5.6vw,8vh), 80px); line-height:1.15; margin-bottom:clamp(6px,1.4vh,16px);}
-  #screen-intro .lede{
-    opacity:1; color:#000; font-weight:500;
-    font-size:clamp(13px, min(2.2vw,3vh), 32px); line-height:1.25;
-    max-width:1100px; margin:0 0 clamp(12px,2.6vh,32px);
-  }
-  #screen-intro .lede b{font-weight:700;}
-  .intro-row{display:flex; align-items:center; gap:clamp(16px,3.2vw,56px); margin:0; position:relative; z-index:1;}
-  .intro-mascot{width:clamp(110px, min(16vw,20vh), 240px); flex:none;}
-  .intro-right{flex:1; display:flex; flex-direction:column; min-width:0;}
-  .intro-card{
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
-    background:var(--region-card); border:1px solid var(--region-card-border, transparent); border-radius:var(--r-lg);
-    padding:clamp(14px,2.4vw,36px) clamp(18px,2.8vw,42px);
-    min-height:clamp(70px,12vh,150px); position:relative;
-  }
-  .intro-card .native-name{font-size:clamp(22px, min(4.6vw,6.4vh), 68px); font-weight:300; color:var(--region-accent); line-height:1.1;}
-  .intro-card .idx-num{font-size:clamp(18px, min(3.6vw,5vh), 54px); font-weight:300; color:var(--region-accent); opacity:1;}
-  .intro-actions{display:flex; justify-content:flex-end; margin-top:clamp(8px,1.8vh,22px);}
-  .intro-actions .btn{
-    border-radius:var(--r-lg); font-weight:600;
-    font-size:clamp(13px, min(2.2vw,3vh), 32px);
-    padding:clamp(10px,1.6vh,22px) clamp(20px,3vw,44px);
-  }
-  .intro-foot{
-    display:flex; justify-content:flex-end; margin-top:clamp(12px,2.6vh,36px);
-    color:var(--region-button, var(--lav-accent));
-    font-size:clamp(12px, min(2vw,2.8vh), 28px);
-  }
-  .intro-foot svg{width:clamp(12px,1.6vw,22px); height:auto; color:var(--region-accent, currentColor);}
-
-  /* ============ SCREEN 5: EXERCISE (сжато по высоте) ============ */
-  #screen-exercise{padding:clamp(8px,1.6vh,16px) 0 clamp(12px,2.4vh,28px);}
-  #screen-exercise .topbar{margin-bottom:clamp(6px,1.2vh,14px);}
-  #screen-exercise h2{font-size:clamp(18px, min(3.6vw,5vh), 48px); margin-bottom:clamp(4px,1vh,12px); line-height:1.15;}
-  #screen-exercise .lede{
-    opacity:1; font-weight:400;
-    font-size:clamp(12px, min(1.8vw,2.4vh), 22px);
-    margin:0 0 clamp(8px,1.6vh,18px); max-width:900px;
-  }
-  /* 02/05 — инструкция */
-  .explain-layout{display:flex; align-items:center; gap:clamp(12px,2.4vw,36px); position:relative; z-index:1;}
-  .explain-card{
-    flex:1; background:var(--region-card); border:1px solid var(--region-card-border, transparent);
-    border-radius:var(--r-lg); padding:clamp(12px,2vh,24px);
-  }
-  .explain-list{list-style:none; padding:0; margin:0; display:grid; gap:clamp(4px,0.8vh,10px);}
-  .explain-list li{
-    display:flex; align-items:baseline; gap:clamp(6px,1vw,14px);
-    font-size:clamp(12px, min(1.8vw,2.4vh), 24px); font-weight:600; color:var(--lav-ink);
-  }
-  .explain-list li .n{
-    color:var(--region-accent); font-weight:800; font-size:clamp(12px, min(1.8vw,2.4vh), 24px);
-    min-width:clamp(20px,2.6vw,32px); flex:none;
-  }
-  .explain-mascot-wrap{
-    flex:none; width:clamp(100px, min(16vw,20vh), 220px);
-    display:flex; flex-direction:column; align-items:center;
-  }
-  .explain-mascot-wrap .side-mascot{width:100%;}
-  .explain-actions{margin-top:clamp(10px,2vh,22px);}
-
-  /* 03/05 — запомни слова */
-  .word-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(8px,1.4vw,16px); margin:clamp(6px,1.2vh,16px) 0; position:relative; z-index:1;}
-  .word-card{
-    background:var(--region-card); border:1px solid var(--region-card-border, transparent); border-radius:var(--r-md);
-    padding:clamp(10px,1.6vh,18px) clamp(8px,1.2vw,14px); min-height:clamp(100px,16vh,170px);
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-  }
-  .word-card .front{font-size:clamp(14px,1.8vw,20px); font-weight:800; color:var(--lav-ink);}
-  .word-card .icon{width:clamp(40px,6vw,60px); height:clamp(40px,6vw,60px); margin:clamp(6px,1vh,10px) 0;}
-  .word-card .sub{font-size:clamp(11px,1.4vw,16px); color:var(--lav-ink); opacity:.6; font-weight:600;}
-
-  /* 04/05 — квиз */
-  .quiz-layout{position:relative; z-index:1;}
-  .quiz-card{
-    background:var(--region-card); border:1px solid var(--region-card-border, transparent);
-    border-radius:var(--r-lg); padding:clamp(14px,2.4vh,28px); margin:clamp(8px,1.6vh,18px) auto;
-    max-width:900px;
-  }
-  .quiz-q{
-    font-size:clamp(14px, min(2.2vw,3vh), 28px); font-weight:700;
-    text-align:center; margin:0 0 clamp(10px,2vh,22px); color:var(--lav-ink);
-  }
-  .quiz-options{display:flex; gap:clamp(6px,1.2vw,14px); flex-wrap:wrap; justify-content:center;}
-  .qopt{
-    border:1.5px solid var(--region-accent); border-radius:var(--r-pill);
-    padding:clamp(8px,1.2vh,16px) clamp(14px,2.2vw,28px);
-    font-size:clamp(13px, min(2vw,2.6vh), 24px); font-weight:500;
-    background:#fff; color:var(--region-accent); cursor:pointer;
-  }
-  .qopt:hover{background:var(--region-card);}
-  .qopt.correct{background:var(--region-accent); color:#fff;}
-  .qopt.wrong{background:#f7dede; border-color:var(--bad); color:var(--bad);}
-  .qopt:disabled{cursor:default;}
-  .quiz-bottom{
-    display:flex; align-items:center; justify-content:center; gap:clamp(10px,1.8vw,24px);
-    margin-top:clamp(8px,1.4vh,18px); flex-wrap:wrap;
-  }
-  .quiz-mascot-wrap{
-    display:flex; flex-direction:column; align-items:center;
-    width:clamp(100px, min(18vw,22vh), 220px);
-  }
-  .quiz-mascot-wrap .mini-mascot{width:100%;}
-  .quiz-hint-row{display:flex; align-items:center; gap:clamp(8px,1.4vw,18px);}
-  .hint-link{
-    font-size:clamp(12px, min(1.6vw,2.2vh), 22px);
-    color:var(--region-accent); text-decoration:underline; cursor:pointer; font-weight:500;
-  }
-  .feedback{margin-top:clamp(6px,1.2vh,14px); font-size:13px; font-weight:700; text-align:center; position:relative; z-index:1;}
-  .feedback.good{color:var(--good-text);}
-  .feedback.bad{color:var(--bad);}
-
-  /* орнамент */
-  .orn-panel{background:#fff; border:1px solid var(--region-card-border, transparent); border-radius:var(--r-md); padding:clamp(8px,1.2vh,14px); margin-bottom:clamp(10px,1.6vh,18px); overflow-x:auto;}
-  .orn-strip{display:flex; gap:6px; min-width:min-content;}
-  .orn-slot{
-    width:clamp(60px,8vw,84px); height:clamp(60px,8vw,84px); flex:none; border-radius:12px; overflow:hidden;
-    border:2px dashed var(--region-accent); opacity:.55; background:var(--lav-bg);
-    background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center;
-    transition:opacity .15s ease, border-style .15s ease;
-  }
-  .orn-slot.filled{opacity:1; border-style:solid; border-color:transparent; cursor:pointer;}
-  .orn-tilebank{display:flex; gap:clamp(8px,1.2vw,12px); flex-wrap:wrap; justify-content:center; margin-bottom:6px;}
-  .orn-tile{
-    width:clamp(60px,8vw,84px); height:clamp(60px,8vw,84px); border-radius:12px; border:1.5px solid var(--region-card-border, var(--region-accent));
-    background-size:cover; background-position:center; cursor:pointer; padding:0; flex:none;
-    transition:transform .12s ease, opacity .12s ease;
-  }
-  .orn-tile:hover{transform:translateY(-2px);}
-  .orn-tile.used{opacity:0; pointer-events:none; transform:scale(.6);}
-  .orn-tile.wrong{animation:orn-shake .3s;}
-  @keyframes orn-shake{ 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
-  .orn-progress{display:flex; gap:5px; margin-top:6px; justify-content:flex-end;}
-  .orn-dot{width:8px; height:8px; border-radius:50%; background:var(--region-card-border, #d9d9d9); opacity:.4;}
-  .orn-dot.on{opacity:1; background:var(--region-accent);}
-  .hint-pill{
-    display:inline-flex; align-items:center; gap:7px; background:var(--lav-bg); color:var(--region-accent, var(--lav-accent));
-    border-radius:var(--r-pill); padding:clamp(8px,1.2vh,12px) clamp(12px,1.8vw,18px); font-size:clamp(12px,1.4vw,14px); font-weight:700; cursor:pointer; border:none;
-  }
-  .hint-pill svg{width:14px; height:14px;}
-
-  /* рецепт */
-  .recipe-food-row{display:flex; align-items:center; gap:clamp(10px,1.6vw,16px); margin-bottom:2px;}
-  .food-badge{width:clamp(40px,5.5vw,56px); height:clamp(40px,5.5vw,56px); object-fit:contain; flex:none;}
-  .recipe-steps{display:flex; flex-direction:column; gap:clamp(6px,1vh,9px); margin-top:clamp(10px,1.6vh,16px);}
-  .recipe-step{
-    border:1.5px solid #fff; background:#fff; border-radius:var(--r-sm);
-    padding:clamp(8px,1.2vh,13px) clamp(10px,1.4vw,16px); font-size:clamp(13px,1.6vw,16px); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:clamp(8px,1.2vw,12px);
-    font-family:inherit; text-align:left; width:100%; transition:background .15s ease, border-color .15s ease;
-  }
-  .recipe-step:hover{background:var(--lav-bg);}
-  .recipe-step.static{cursor:default;}
-  .recipe-step.static:hover{background:#fff;}
-  .recipe-step .order-badge{width:clamp(20px,2.6vw,24px); height:clamp(20px,2.6vw,24px); border-radius:50%; background:var(--lav-bg); display:flex; align-items:center; justify-content:center; font-size:clamp(10px,1.2vw,12px); font-weight:800; flex:none; color:var(--region-accent);}
-  .recipe-step.static .order-badge, .recipe-step.placed .order-badge{background:var(--region-accent); color:#fff;}
-  .recipe-step.placed{border-color:var(--region-accent);}
-  /* подзаголовок «Рецепт по памяти» / «Восстанови порядок» + маскот справа */
-  .recipe-sub-row{
-    display:flex; align-items:center; gap:clamp(12px,2.4vw,36px);
-    margin:clamp(6px,1.2vh,14px) 0 clamp(10px,2vh,22px);
-    position:relative; z-index:1;
-  }
-  .recipe-sub-row .recipe-sub{
-    font-size:clamp(13px, min(2vw,2.8vh), 28px); font-weight:700;
-    color:var(--region-accent); opacity:1; margin:0;
-  }
-  .recipe-sub-row .recipe-mascot{
-    width:clamp(80px, min(12vw,16vh), 180px); flex:none;
-  }
-  .box{
-    border:1px solid var(--region-card-border, transparent); background:var(--region-card, #fff); border-radius:var(--r-lg);
-    padding:clamp(12px,2vh,24px); margin:0 0 clamp(10px,1.8vh,20px); position:relative; z-index:1;
-  }
-
-  /* ============ SCREEN 6: RESULTS ============ */
-  #screen-results{padding:clamp(12px,2.4vh,24px) 0 clamp(20px,4vh,48px);}
-  #screen-results .topbar{margin-bottom:clamp(10px,2vh,24px);}
-  .result-hero{display:flex; align-items:center; gap:clamp(12px,2vw,28px); margin:clamp(8px,1.8vh,20px) 0 clamp(4px,1vh,10px); position:relative; z-index:1; flex-wrap:wrap;}
-  .result-mascot{width:clamp(60px, min(8vw,10vh), 120px); flex:none;}
-  .result-greeting{font-size:clamp(32px, min(7vw,9vh), 96px); font-weight:800; letter-spacing:-0.01em; margin:0; color:#000;}
-  .pct-badge{
-    border:1.5px solid var(--good); background:var(--good-bg); color:var(--good-text);
-    border-radius:var(--r-pill); padding:clamp(4px,0.8vh,10px) clamp(10px,1.6vw,20px);
-    font-size:clamp(14px, min(2vw,2.8vh), 28px); font-weight:800;
-  }
-  .result-sub{
-    font-size:clamp(16px, min(2.6vw,3.4vh), 36px); font-weight:700;
-    color:var(--region-accent); margin:0 0 clamp(14px,2.4vh,28px);
-  }
-  .bars-box{
-    background:var(--region-card); border:1px solid var(--region-card-border, transparent);
-    border-radius:var(--r-lg); padding:clamp(16px,2.4vw,32px);
-    max-width:720px; margin:0 0 clamp(14px,2.4vh,28px); position:relative; z-index:1;
-  }
-  .bar-row{display:flex; align-items:center; gap:clamp(10px,1.6vw,20px); padding:clamp(6px,1vh,12px) 0;}
-  .bar-row .bname{width:clamp(80px,10vw,140px); font-size:clamp(14px, min(1.8vw,2.4vh), 24px); font-weight:600; flex:none;}
-  .bar-track{flex:1; height:clamp(16px,2.4vh,32px); border-radius:var(--r-pill); background:#fff; overflow:hidden; border:1px solid var(--region-card-border, #e0e0e0);}
-  .bar-fill{height:100%; background:var(--good); width:0%; border-radius:var(--r-pill); transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
-  .bar-val{width:clamp(40px,5vw,70px); text-align:right; font-weight:700; font-size:clamp(14px, min(1.8vw,2.4vh), 24px);}
-  .learned-line{
-    font-size:clamp(14px, min(2vw,2.8vh), 28px); font-weight:600;
-    color:var(--region-accent); margin:0 0 clamp(16px,2.8vh,36px); position:relative; z-index:1;
-  }
-  .result-footer{display:flex; justify-content:flex-end; position:relative; z-index:1;}
-  .result-footer .btn{
-    border-radius:var(--r-lg); font-weight:600;
-    font-size:clamp(14px, min(2.2vw,3vh), 32px);
-    padding:clamp(12px,1.8vh,22px) clamp(22px,3.2vw,44px);
-  }
-
-  .hidden{display:none !important;}
-
-  .theme-tatar{
-    --region-bg:#FBE9CA; --region-card:#FFFDEA; --region-card-border:#96780A;
-    --region-heading:#8A3916; --region-accent:#96780A;
-    --region-button:#491925; --region-button-text:#DAD4CB;
-  }
-  .theme-karelia{
-    --region-bg:#C1DBB8; --region-card:#FFFDEA; --region-card-border:#E72A6E;
-    --region-heading:#00863C; --region-accent:#004820;
-    --region-button:#B6154F; --region-button-text:#DAD4CB;
-  }
-  .theme-kalmykia{
-    --region-bg:#D2EDFD; --region-card:#EAF5FF; --region-card-border:#492F22;
-    --region-heading:#F80302; --region-accent:#F80302;
-    --region-button:#492F22; --region-button-text:#DAD4CB;
-  }
-  .theme-yakutia{
-    --region-bg:#D7F3F6; --region-card:#FCF1F1; --region-card-border:#C93917;
-    --region-heading:#054B63; --region-accent:#054B63;
-    --region-button:#054B63; --region-button-text:#DAD4CB;
-  }
-  .theme-tatar, .theme-karelia, .theme-kalmykia, .theme-yakutia{background:var(--region-bg);}
-
-  body.theme-tatar{background:#FBE9CA;}
-  body.theme-karelia{background:#C1DBB8;}
-  body.theme-kalmykia{background:#D2EDFD;}
-  body.theme-yakutia{background:#D7F3F6;}
-
-  @media (min-width:1201px){
-    h1{font-size:clamp(26px,4.4vw,54px);}
-    #screen-intro h1{font-size:clamp(24px, min(5.6vw,8vh), 80px);}
-  }
-
-  @media (max-width:900px){
-    .culture-grid{grid-template-columns:repeat(2,1fr);}
-    .word-grid{grid-template-columns:repeat(2,1fr);}
-    .home-hero{flex-direction:column; align-items:flex-start; gap:24px;}
-    .home-mascot-wrap{width:clamp(180px,45vw,300px); align-self:center;}
-    .select-hero{flex-direction:column; gap:20px;}
-    .select-mascots{width:clamp(150px, 40vw, 250px);}
-    .intro-row{flex-direction:column; align-items:flex-start; gap:24px;}
-    .intro-right{width:100%;}
-    .explain-layout{flex-direction:column; align-items:stretch;}
-    .explain-mascot-wrap{align-self:center;}
-    .recipe-sub-row{flex-direction:column; align-items:flex-start; gap:10px;}
-  }
-  @media (max-width:760px){
-    :root{--pad:20px;}
-    .steps-wrap{flex-direction:column;}
-    .step-arrow{transform:rotate(90deg); align-self:flex-start; margin-left:12px;}
-    .step-card{min-height:110px;}
-    .box-row{flex-direction:column; align-items:flex-start;}
-    .badge-circle{width:50px; height:46px; font-size:12px;}
-    .result-top{flex-wrap:wrap;}
-    .quiz-card{padding:20px;}
-    .heading-mascot{width:80px;}
-    .orn-slot, .orn-tile{width:68px; height:68px;}
-  }
-  @media (max-width:600px){
-    :root{--pad:16px;}
-    .screen{padding:22px 0 64px;}
-    .topbar{align-items:flex-start;}
-    .topnav{font-size:13px;}
-    .lang-pill{padding:3px 10px; font-size:12px;}
-    .menu-btn{width:26px; height:44px;}
-    .culture-grid{grid-template-columns:repeat(2,1fr); gap:12px;}
-    .culture-thumb{border-radius:20px;}
-    .culture-name{font-size:14px;}
-    .word-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
-    .word-card{min-height:150px; padding:14px 10px;}
-    .word-card .icon{width:46px; height:46px;}
-    .word-card .front{font-size:16px;}
-    .quiz-card{padding:18px;}
-    .quiz-options{gap:8px;}
-    .qopt{padding:10px 16px; font-size:14px;}
-    .bars-box{padding:16px;}
-    .bar-row .bname{width:78px; font-size:13px;}
-    .result-footer{justify-content:flex-start;}
-    .result-mascot{width:52px;}
-    .result-greeting{font-size:clamp(26px,8vw,34px);}
-    .pct-badge{font-size:14px; padding:5px 12px;}
-    .btn{padding:12px 22px; font-size:14px;}
-    .intro-card{padding:16px 18px;}
-    .heading-mascot{width:64px;}
-    .orn-slot, .orn-tile{width:56px; height:56px; border-radius:9px;}
-    .orn-panel{padding:10px;}
-  }
-  @media (max-width:380px){
-    .culture-grid{grid-template-columns:1fr;}
-    .word-grid{grid-template-columns:1fr;}
-    .word-card{min-height:auto; flex-direction:row; justify-content:flex-start; text-align:left; gap:12px; padding:12px 14px;}
-    .word-card .icon{margin:0; width:38px; height:38px; flex:none;}
-    h1{font-size:26px;}
-    .lang-pill, .topnav .caps-note{display:none;}
-    .heading-mascot{display:none;}
-  }
-
-</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -535,17 +15,18 @@
 
   <!-- SCREEN 1: HOME -->
   <section class="screen active screen-neutral" id="screen-home">
-    <div class="deco-circle" style="width:416px;height:210px; top:-182px; right:-60px; transform:rotate(-2.66deg);"></div>
-    <div class="deco-circle" style="width:340px;height:340px; top:-140px; right:-140px;"></div>
-    <div class="deco-circle deco-fill" style="width:352px;height:178px; bottom:-90px; right:140px;"></div>
-    <div class="deco-circle deco-fill" style="width:352px;height:111px; bottom:-60px; right:360px;"></div>
-    <div class="deco-circle" style="width:416px;height:210px; bottom:-120px; right:80px;"></div>
-    <div class="deco-circle" style="width:416px;height:131px; bottom:-70px; right:300px;"></div>
+    <div class="deco-circle deco--h1"></div>
+    <div class="deco-circle deco--h2"></div>
+    <div class="deco-circle deco-fill deco--h3"></div>
+    <div class="deco-circle deco-fill deco--h4"></div>
+    <div class="deco-circle deco--h5"></div>
+    <div class="deco-circle deco--h6"></div>
     <div class="topbar">
       <div class="brand">Культура развивает</div>
       <div class="topnav">
         <span class="caps-note">Язык</span><span class="lang-pill">рус</span>
         <a class="underline" onclick="go('screen-how')">О проекте</a>
+        <!-- кнопка истории временно скрыта: <a class="underline" onclick="openHistory()">История</a> -->
         <span class="menu-btn"><svg viewBox="0 0 24 34" fill="none" stroke="#343DD5" stroke-width="2"><circle cx="12" cy="8" r="5"/><rect x="6" y="17" width="12" height="13"/></svg></span>
       </div>
     </div>
@@ -565,15 +46,16 @@
 
   <!-- SCREEN 2: HOW IT WORKS -->
   <section class="screen screen-neutral" id="screen-how">
-    <div class="deco-circle" style="width:416px;height:210px; bottom:-120px; left:-100px;"></div>
-    <div class="deco-circle deco-fill" style="width:352px;height:178px; bottom:-90px; left:60px;"></div>
-    <div class="deco-circle deco-fill" style="width:352px;height:111px; bottom:-60px; left:-40px;"></div>
-    <div class="deco-circle" style="width:416px;height:131px; bottom:-70px; left:120px;"></div>
+    <div class="deco-circle deco--w1"></div>
+    <div class="deco-circle deco-fill deco--w2"></div>
+    <div class="deco-circle deco-fill deco--w3"></div>
+    <div class="deco-circle deco--w4"></div>
     <div class="topbar">
       <div class="brand">Культура развивает</div>
       <div class="topnav">
         <span class="caps-note">Язык</span><span class="lang-pill">рус</span>
         <a class="underline" onclick="go('screen-home')">На главную</a>
+        <!-- кнопка истории временно скрыта: <a class="underline" onclick="openHistory()">История</a> -->
         <span class="menu-btn"><svg viewBox="0 0 24 34" fill="none" stroke="#343DD5" stroke-width="2"><circle cx="12" cy="8" r="5"/><rect x="6" y="17" width="12" height="13"/></svg></span>
       </div>
     </div>
@@ -638,7 +120,7 @@
   <!-- SCREEN 5: EXERCISE FLOW -->
   <section class="screen" id="screen-exercise">
     <div class="topbar">
-      <div class="brand small back-link" id="ex-back" onclick="go('screen-intro')" style="cursor:pointer;"></div>
+      <div class="brand small back-link" id="ex-back" onclick="go('screen-intro')"></div>
       <div class="meta-col">
         <div class="badge-circle" id="ex-progress">01/05</div>
         <div class="timer-row" id="ex-timer"></div>
@@ -663,17 +145,17 @@
         </div>
       </div>
       <div class="explain-actions">
-        <button class="btn btn--rect" onclick="showStep('step-memorize')">Всё понятно →</button>
+        <button class="btn btn--rect" onclick="nextExercise()">Всё понятно →</button>
       </div>
     </div>
 
     <!-- 03/05: запомни слова -->
     <div id="step-memorize" class="hidden">
       <h2>Запомни слова</h2>
-      <p class="lede" style="font-weight:700; opacity:1; color:var(--region-accent);">а также их перевод</p>
+      <p class="lede lede--accent">а также их перевод</p>
       <div class="word-grid" id="word-grid"></div>
-      <div class="row-between" style="justify-content:flex-start;">
-        <button class="btn btn--rect" onclick="startQuiz()">Запомнил</button>
+      <div class="row-between row-between--start">
+        <button class="btn btn--rect" id="words-next">Запомнил</button>
       </div>
     </div>
 
@@ -695,8 +177,8 @@
             <span class="timer-row" id="quiz-timer"></span>
           </div>
         </div>
-        <div class="row-between" style="justify-content:flex-end; margin-top:12px;">
-          <button class="btn btn--rect hidden" id="quiz-next" onclick="showStep('step-ornament')">Далее →</button>
+        <div class="row-between row-between--end row-quiz">
+          <button class="btn btn--rect hidden" id="quiz-next">Далее →</button>
         </div>
       </div>
     </div>
@@ -704,9 +186,9 @@
     <!-- игра с орнаментом -->
     <div id="step-ornament" class="hidden">
       <h2>Игра</h2>
-      <p class="lede" style="font-weight:700; opacity:1; color:var(--region-accent);">Восстанови последовательность</p>
+      <p class="lede lede--accent">Восстанови последовательность</p>
       <div class="box">
-        <p style="margin:0; font-size:14px;" id="orn-desc"></p>
+        <p class="box-text" id="orn-desc"></p>
       </div>
       <div class="orn-panel">
         <div class="orn-strip" id="orn-strip"></div>
@@ -718,7 +200,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.44 1 1.16 1 1.94V16h5v-.16c0-.78.4-1.5 1-1.94A6 6 0 0 0 12 3Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Подсказка
         </span>
-        <button class="btn btn--rect hidden" id="orn-next" onclick="showStep('step-recipe-view')">Готово →</button>
+        <button class="btn btn--rect hidden" id="orn-next">Готово →</button>
       </div>
     </div>
 
@@ -726,17 +208,17 @@
     <div id="step-recipe-view" class="hidden">
       <div class="recipe-food-row">
         <img class="food-badge" id="recipe-view-food" src="" alt="">
-        <h2 style="text-transform:uppercase; margin:0; font-size:clamp(18px, min(3.6vw,5vh), 48px);" id="recipe-view-title"></h2>
+        <h2 class="recipe-title" id="recipe-view-title"></h2>
       </div>
       <div class="recipe-sub-row">
         <p class="recipe-sub">Рецепт по памяти</p>
         <div class="recipe-mascot" id="recipe-view-mascot"></div>
       </div>
       <div class="box">
-        <p style="margin:0 0 6px; font-size:clamp(12px,1.6vw,16px);" id="recipe-view-intro"></p>
+        <p class="recipe-intro" id="recipe-view-intro"></p>
         <div class="recipe-steps" id="recipe-view-list"></div>
       </div>
-      <div class="row-between" style="justify-content:flex-start; margin-top:clamp(10px,1.8vh,20px);">
+      <div class="row-between row-between--start row-tight">
         <button class="btn btn--rect" id="recipe-view-next">Запомнил</button>
       </div>
     </div>
@@ -745,17 +227,17 @@
     <div id="step-recipe-game" class="hidden">
       <div class="recipe-food-row">
         <img class="food-badge" id="recipe-game-food" src="" alt="">
-        <h2 style="text-transform:uppercase; margin:0; font-size:clamp(18px, min(3.6vw,5vh), 48px);" id="recipe-title"></h2>
+        <h2 class="recipe-title" id="recipe-title"></h2>
       </div>
       <div class="recipe-sub-row">
         <p class="recipe-sub">Восстанови порядок</p>
         <div class="recipe-mascot" id="recipe-game-mascot"></div>
       </div>
       <div class="box">
-        <p style="margin:0 0 6px; font-size:clamp(12px,1.6vw,16px);" id="recipe-intro"></p>
+        <p class="recipe-intro" id="recipe-intro"></p>
         <div class="recipe-steps" id="recipe-steps"></div>
       </div>
-      <div class="row-between" style="justify-content:flex-end; margin-top:clamp(10px,1.8vh,20px);">
+      <div class="row-between row-between--end row-tight">
         <button class="btn btn--rect hidden" id="recipe-next">Готово →</button>
       </div>
     </div>
@@ -784,592 +266,33 @@
     </div>
   </section>
 
+  <!-- SCREEN 7: ИСТОРИЯ ПРОХОЖДЕНИЯ (localStorage, без регистрации) -->
+  <section class="screen screen-neutral" id="screen-history">
+    <div class="topbar">
+      <div class="brand">Культура развивает</div>
+      <div class="topnav">
+        <a class="underline" onclick="go('screen-home')">На главную</a>
+      </div>
+    </div>
+    <h2>Твоя история</h2>
+    <p class="lede">Сохраняется прямо в этом браузере — на этом устройстве. Без регистрации.</p>
+    <div id="history-list"></div>
+    <div class="row-between">
+      <button class="cta" onclick="clearHistoryUI()">Очистить историю</button>
+    </div>
+  </section>
+
 </div>
 
-<script>
-
-const CULTURES = {
-  tatar: {
-    id:'tatar', name:'Татарстан', nameGenitive:'Татарстана', native:'Татарча',
-    langGenitive:'татарских', langAdjForm:'татарским', langAdj:'татарский', greeting:'ХӘЕР!',
-    words:[
-      {w:'йолдыз', m:'звезда'},
-      {w:'ай',     m:'луна'},
-      {w:'кояш',   m:'солнце'},
-      {w:'су',     m:'вода'},
-    ],
-    quiz:[{ q:'Какое слово означает «солнце»?', options:['йолдыз','ай','кояш'], answer:'кояш',
-      explain:'«Кояш» — солнце. От него образуется «кояшлы» — солнечный.' }],
-    quizHint:'Подсказка: это слово однокоренное с «кояшлы» — солнечный.',
-    ornament:{
-      intro:'В татарском орнаменте важны повторения и закономерности.<br><b>Расставь элементы в правильном порядке.</b>',
-      hint:'Начни с центрального элемента — большой цветочной розетки, а затем чередуй крупные и мелкие детали.'
-    },
-    recipe:{
-      title:'Эчпочмак',
-      intro:'Ты увидишь этапы приготовления традиционного блюда.<br><b>Запомни их порядок.</b>',
-      steps:['Замесить тесто из муки, воды и соли','Нарезать мясо, картофель и лук кубиками',
-             'Раскатать тесто и вырезать круги','Выложить начинку и защипать треугольником']
-    }
-  },
-  karelia: {
-    id:'karelia', name:'Карелия', nameGenitive:'Карелии', native:'Karjalan kieli',
-    langGenitive:'карельских', langAdjForm:'карельским', langAdj:'карельский', greeting:'HYVÄ!',
-    words:[
-      {w:'tähti', m:'звезда'},
-      {w:'kuu',   m:'луна'},
-      {w:'päivä', m:'солнце'},
-      {w:'vezi',  m:'вода'},
-    ],
-    quiz:[{ q:'Какое слово означает «вода»?', options:['kuu','vezi','mua'], answer:'vezi',
-      explain:'«Vezi» — вода, родственно финскому «vesi».' }],
-    quizHint:'Подсказка: короткое слово, начинается с «v» — как финское «vesi».',
-    ornament:{
-      intro:'Карельская вышивка строится на ритме и повторе узоров.<br><b>Расставь элементы в правильном порядке.</b>',
-      hint:'Присмотрись к форме каждого элемента — узор собирается из повторяющихся мотивов.'
-    },
-    recipe:{
-      title:'Калитки',
-      intro:'Ты увидишь этапы приготовления традиционного блюда.<br><b>Запомни их порядок.</b>',
-      steps:['Замесить ржаное тесто','Раскатать тонкие лепёшки',
-             'Положить начинку из картофеля или пшёнки','Защипать края и запечь в печи']
-    }
-  },
-  kalmykia: {
-    id:'kalmykia', name:'Калмыкия', nameGenitive:'Калмыкии', native:'Хальмг келн',
-    langGenitive:'калмыцких', langAdjForm:'калмыцким', langAdj:'калмыкский', greeting:'СӘН!',
-    words:[
-      {w:'одн',  m:'звезда'},
-      {w:'сар',  m:'луна'},
-      {w:'нарн', m:'солнце'},
-      {w:'усн',  m:'вода'},
-    ],
-    quiz:[{ q:'Какое слово означает «луна»?', options:['нарн','сар','одн'], answer:'сар',
-      explain:'«Сар» — луна и месяц. Так же у многих монгольских народов.' }],
-    quizHint:'Подсказка: короткое слово из трёх букв, начинается на «с».',
-    ornament:{
-      intro:'Калмыцкий орнамент «зег» — это степные узоры, где всё повторяется.<br><b>Расставь элементы в правильном порядке.</b>',
-      hint:'Обрати внимание на завитки — в «зег» они всегда идут в одном направлении.'
-    },
-    recipe:{
-      title:'Калмыцкий чай',
-      intro:'Ты увидишь этапы приготовления традиционного напитка.<br><b>Запомни их порядок.</b>',
-      steps:['Вскипятить воду','Добавить чайную заварку','Влить молоко и прокипятить','Добавить соль и мускатный орех']
-    }
-  },
-  yakutia: {
-    id:'yakutia', name:'Якутия', nameGenitive:'Якутии', native:'Саха тыла',
-    langGenitive:'якутских', langAdjForm:'якутским', langAdj:'якутский', greeting:'ҮЧГЭЙ!',
-    words:[
-      {w:'сулус', m:'звезда'},
-      {w:'ый',    m:'луна'},
-      {w:'күн',   m:'солнце'},
-      {w:'уу',    m:'вода'},
-    ],
-    quiz:[{ q:'Какое слово означает «солнце»?', options:['сулус','ый','күн'], answer:'күн',
-      explain:'«Күн» — солнце и день. У тюркских народов это одно из главных слов.' }],
-    quizHint:'Подсказка: короткое слово с мягким «ү», похоже на тюркское «kün».',
-    ornament:{
-      intro:'Якутские узоры подчиняются строгому ритму.<br><b>Расставь элементы в правильном порядке.</b>',
-      hint:'Смотри на края элементов — они подсказывают, какая деталь идёт следующей.'
-    },
-    recipe:{
-      title:'Строганина',
-      intro:'Ты увидишь этапы приготовления традиционного блюда.<br><b>Запомни их порядок.</b>',
-      steps:['Заморозить свежую рыбу','Снять кожу','Нарезать тонкими стружками','Подать с солью и чёрным перцем']
-    }
-  }
-};
-
-/* ---------- navigation ---------- */
-const NEUTRAL_SCREENS = ['screen-home','screen-how','screen-select'];
-const THEME_CLASSES = ['theme-tatar','theme-karelia','theme-kalmykia','theme-yakutia'];
-
-function go(id){
-  if(NEUTRAL_SCREENS.includes(id)){
-    document.body.classList.remove(...THEME_CLASSES);
-    document.getElementById('app').classList.remove(...THEME_CLASSES);
-  }
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0, behavior:'instant'});
-}
-
-function hourglassSVG(){
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-}
-
-const WORD_ICON_ORDER = ['star','moon','sun','water'];
-const WORD_ICONS = {
-  star: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gStar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dbe6f5"/><stop offset="1" stop-color="#7c93c4"/></linearGradient></defs><path d="M30 4 L35 25 L56 30 L35 35 L30 56 L25 35 L4 30 L25 25 Z" fill="url(#gStar)"/><path d="M46 40 L48 46 L54 48 L48 50 L46 56 L44 50 L38 48 L44 46 Z" fill="url(#gStar)"/></svg>',
-  moon: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gMoon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6f74c9"/><stop offset="1" stop-color="#c9d0ef"/></linearGradient></defs><path d="M40 6 A24 24 0 1 0 40 54 A18 18 0 1 1 40 6 Z" fill="url(#gMoon)"/></svg>',
-  sun: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gSun"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f0a53a"/></radialGradient></defs><path d="M30 2 L34 15 L46 9 L42 22 L55 24 L44 31 L55 38 L42 40 L46 53 L34 47 L30 60 L26 47 L14 53 L18 40 L5 38 L16 31 L5 24 L18 22 L14 9 L26 15 Z" fill="url(#gSun)"/><circle cx="30" cy="31" r="12" fill="url(#gSun)"/></svg>',
-  water: '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g stroke="#0d6e7a" stroke-width="4.5" fill="none" stroke-linecap="round"><path d="M6 24 Q15 15 24 24 T42 24 T60 24"/><path d="M6 40 Q15 31 24 40 T42 40 T60 40"/></g></svg>',
-};
-
-/* ---------- маскоты ---------- */
-let __gradSeq = 0;
-function mascotSVG(c1, c2, pose){
-  pose = pose || 'plain';
-  const gid = 'mg' + (__gradSeq++);
-  const legs = '<line x1="40" y1="78" x2="37" y2="107" stroke="#231F20" stroke-width="3.4" stroke-linecap="round"/>' +
-               '<line x1="60" y1="78" x2="63" y2="107" stroke="#231F20" stroke-width="3.4" stroke-linecap="round"/>';
-  const ring = '<ellipse cx="50" cy="113" rx="35" ry="5" fill="none" stroke="'+c2+'" stroke-opacity="0.4" stroke-width="1.6"/>';
-  let eyes = '<circle cx="41" cy="49" r="3.6" fill="#231F20"/><circle cx="59" cy="49" r="3.6" fill="#231F20"/>';
-  let extra = '';
-  if(pose === 'glasses'){
-    eyes = '<circle cx="39" cy="50" r="10" fill="none" stroke="#231F20" stroke-width="2.6"/>' +
-           '<circle cx="61" cy="50" r="10" fill="none" stroke="#231F20" stroke-width="2.6"/>' +
-           '<line x1="49" y1="50" x2="51" y2="50" stroke="#231F20" stroke-width="2.6"/>' +
-           '<circle cx="39" cy="50" r="2.6" fill="#231F20"/><circle cx="61" cy="50" r="2.6" fill="#231F20"/>';
-  }
-  if(pose === 'cap'){
-    extra = '<g transform="translate(50 4)">' +
-            '<polygon points="-24,6 0,-6 24,6 0,18" fill="#231F20"/>' +
-            '<rect x="-3" y="8" width="6" height="9" fill="#231F20"/>' +
-            '<line x1="19" y1="3" x2="27" y2="22" stroke="#231F20" stroke-width="2"/>' +
-            '<circle cx="27" cy="24" r="2.8" fill="#231F20"/>' +
-            '</g>';
-  }
-  if(pose === 'flex'){
-    extra = '<g stroke="#231F20" stroke-width="3.2" fill="none" stroke-linecap="round">' +
-            '<path d="M18 62 C10 50 14 36 26 34"/><path d="M82 62 C90 50 86 36 74 34"/>' +
-            '</g>' +
-            '<circle cx="24" cy="30" r="7" fill="#231F20"/><circle cx="76" cy="30" r="7" fill="#231F20"/>';
-  }
-  if(pose === 'cook'){
-    extra = '<g transform="translate(66 70)">' +
-            '<path d="M0 10 a14 9 0 1 0 28 0 Z" fill="#231F20"/>' +
-            '<rect x="10" y="1" width="8" height="6" rx="2" fill="#231F20"/>' +
-            '<line x1="-10" y1="4" x2="0" y2="8" stroke="#231F20" stroke-width="3" stroke-linecap="round"/>' +
-            '</g>';
-  }
-  if(pose === 'book'){
-    extra = '<g transform="translate(50 72)">' +
-            '<path d="M-22 0 L-22 -18 Q0 -24 0 -18 L0 0 Z" fill="#231F20"/>' +
-            '<path d="M22 0 L22 -18 Q0 -24 0 -18 L0 0 Z" fill="#231F20"/>' +
-            '<path d="M-20 -2 L-20 -16 Q0 -22 0 -16 L0 -2 Z" fill="#fff"/>' +
-            '<path d="M20 -2 L20 -16 Q0 -22 0 -16 L0 -2 Z" fill="#fff"/>' +
-            '</g>';
-  }
-  return '<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">' +
-    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs>' +
-    ring + legs +
-    '<path d="M50 12 C74 12 84 38 84 54 C84 80 70 92 50 92 C30 92 16 80 16 54 C16 38 26 12 50 12 Z" fill="url(#'+gid+')"/>' +
-    eyes + extra + '</svg>';
-}
-
-function groupMascotSVG(){
-  const seq = __gradSeq++;
-  const set = [
-    ['#F2685C','#C0392B'],
-    ['#4DA3CA','#1F235A'],
-    ['#F5B8CD','#E62B6F'],
-    ['#C04F8A','#7A2E5C']
-  ];
-  let out = '<svg viewBox="0 0 260 130" xmlns="http://www.w3.org/2000/svg"><defs>';
-  set.forEach((c,i)=>{
-    out += '<linearGradient id="gg'+seq+'-'+i+'" x1="0" y1="0" x2="0" y2="1">' +
-           '<stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient>';
-  });
-  out += '</defs>';
-  const xs = [18, 82, 148, 210];
-  set.forEach((c,i)=>{
-    const x = xs[i];
-    out += '<line x1="'+(x+12)+'" y1="96" x2="'+(x+9)+'" y2="120" stroke="#231F20" stroke-width="3" stroke-linecap="round"/>' +
-           '<line x1="'+(x+26)+'" y1="96" x2="'+(x+29)+'" y2="120" stroke="#231F20" stroke-width="3" stroke-linecap="round"/>' +
-           '<ellipse cx="'+(x+19)+'" cy="62" rx="19" ry="36" fill="url(#gg'+seq+'-'+i+')"/>' +
-           '<circle cx="'+(x+13)+'" cy="52" r="2.6" fill="#231F20"/><circle cx="'+(x+25)+'" cy="52" r="2.6" fill="#231F20"/>';
-  });
-  out += '<rect x="112" y="98" width="40" height="20" rx="5" fill="#E08A2E"/>' +
-         '<rect x="126" y="92" width="12" height="7" rx="2" fill="#231F20"/>' +
-         '</svg>';
-  return out;
-}
-
-function quizMascotSVG(c1, c2){
-  const gid = 'mg' + (__gradSeq++);
-  return '<svg viewBox="0 0 140 84" xmlns="http://www.w3.org/2000/svg">' +
-    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs>' +
-    '<ellipse cx="70" cy="78" rx="62" ry="5" fill="none" stroke="'+c2+'" stroke-opacity="0.35" stroke-width="1.5"/>' +
-    '<rect x="6" y="56" width="26" height="7" rx="2" fill="#231F20"/>' +
-    '<rect x="108" y="56" width="26" height="7" rx="2" fill="#231F20"/>' +
-    '<path d="M42 50 C54 45 64 50 70 55 C76 50 86 45 98 50 L98 62 C86 57 76 62 70 67 C64 62 54 57 42 62 Z" fill="#fff" stroke="#231F20" stroke-width="1.6"/>' +
-    '<ellipse cx="70" cy="30" rx="21" ry="17" fill="url(#'+gid+')"/>' +
-    '<circle cx="63" cy="28" r="2.8" fill="#231F20"/><circle cx="77" cy="28" r="2.8" fill="#231F20"/>' +
-    '</svg>';
-}
-
-function renderCultureGrid(){
-  const grid = document.getElementById('culture-grid');
-  grid.innerHTML = '';
-  ['tatar','karelia','kalmykia','yakutia'].forEach(id=>{
-    const c = CULTURES[id];
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'culture-card';
-    btn.dataset.culture = id;
-    btn.innerHTML =
-      '<span class="culture-thumb culture-thumb--'+id+'"></span>' +
-      '<span class="culture-name">'+c.name+'</span>';
-    btn.onclick = ()=>{ openCulture(id); };
-    grid.appendChild(btn);
-  });
-}
-
-let current = null;
-let score = { memoryHits:0, memoryTotal:0, attentionHits:0, attentionTotal:0, logicHits:0, logicTotal:0, correctAnswers:0 };
-let timerInterval = null;
-
-function resetScore(){
-  score = { memoryHits:0, memoryTotal:0, attentionHits:0, attentionTotal:0, logicHits:0, logicTotal:0, correctAnswers:0 };
-}
-
-function openCulture(id){
-  current = CULTURES[id];
-  const app = document.getElementById('app');
-  app.classList.remove(...THEME_CLASSES);
-  app.classList.add('theme-' + id);
-  document.body.classList.remove(...THEME_CLASSES);
-  document.body.classList.add('theme-' + id);
-
-  document.getElementById('intro-title').innerHTML = current.name + ' <span class="native">' + current.native + '</span>';
-  document.getElementById('intro-lede').innerHTML = 'Сегодня ты познакомишься с языком и культурой ' + current.nameGenitive + ' через <b>5 небольших заданий</b>.';
-  document.getElementById('intro-native').innerText = current.native;
-  renderMascot('intro-mascot', id, 'plain');
-  document.getElementById('ex-back').innerText = '← ' + current.native;
-  document.getElementById('intro-timer').innerHTML = hourglassSVG() + ' 09:59';
-
-  go('screen-intro');
-}
-
-function getMascotColors(id){
-  const map = {
-    tatar:    ['#F7941D', '#C05819'],
-    karelia:  ['#E62B6F', '#A93A95'],
-    kalmykia: ['#F37564', '#FAA223'],
-    yakutia:  ['#4DA3CA', '#1F235A'],
-    neutral:  ['#ECC9E0', '#F8A48A'],
-  };
-  return map[id] || ['#888888', '#555555'];
-}
-
-function renderMascot(containerId, region, pose){
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  const colors = getMascotColors(region);
-  const svgFallback = (containerId === 'quiz-mascot')
-    ? quizMascotSVG(colors[0], colors[1])
-    : (pose === 'group' ? groupMascotSVG() : mascotSVG(colors[0], colors[1], pose));
-
-  const src = 'assets/mascot-' + region + '-' + pose + '.png';
-  const probe = new Image();
-  probe.onload = ()=>{
-    el.innerHTML = '<img src="' + src + '" alt="" style="width:100%; height:100%; object-fit:contain;">';
-  };
-  probe.onerror = ()=>{ el.innerHTML = svgFallback; };
-  probe.src = src;
-}
-
-function startExercise(){
-  resetScore();
-  document.getElementById('explain-title').innerHTML = 'Не знаешь <span style="color:var(--region-accent)">' + current.langAdj + '</span>?<br>Это нормально.';
-  renderMascot('explain-mascot', current.id, 'glasses');
-  go('screen-exercise');
-  showStep('step-explain');
-}
-
-function showStep(id){
-  document.querySelectorAll('#screen-exercise > div[id^="step-"]').forEach(s=>s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-
-  const progressMap = {
-    'step-explain':'02/05','step-memorize':'03/05','step-quiz':'04/05',
-    'step-ornament':'03/05','step-recipe-view':'04/05','step-recipe-game':'05/05'
-  };
-  document.getElementById('ex-progress').innerText = progressMap[id] || '';
-
-  clearInterval(timerInterval);
-  const timeMap = {'step-memorize':239,'step-quiz':179,'step-ornament':150,'step-recipe-view':150,'step-recipe-game':150};
-  const timerEl = document.getElementById('ex-timer');
-  if(timeMap[id]) startTimer(timeMap[id], timerEl); else timerEl.innerHTML = '';
-
-  window.scrollTo({top:0, behavior:'instant'});
-
-  if(id === 'step-memorize')     buildWordGrid();
-  if(id === 'step-quiz')         {}
-  if(id === 'step-ornament')     buildOrnamentGame();
-  if(id === 'step-recipe-view')  buildRecipeView();
-  if(id === 'step-recipe-game')  buildRecipeGame();
-}
-
-function startTimer(seconds, el){
-  let s = seconds;
-  const render = ()=>{
-    const m = Math.floor(s/60), sec = s%60;
-    el.innerHTML = hourglassSVG() + ' ' + m + ':' + String(sec).padStart(2,'0');
-  };
-  render();
-  timerInterval = setInterval(()=>{ s--; if(s<0){ clearInterval(timerInterval); return; } render(); }, 1000);
-}
-
-function buildWordGrid(){
-  const grid = document.getElementById('word-grid');
-  grid.innerHTML = '';
-  current.words.forEach((item, i)=>{
-    const iconKey = WORD_ICON_ORDER[i] || 'star';
-    const card = document.createElement('div');
-    card.className = 'word-card';
-    card.innerHTML =
-      '<div class="front">' + item.w + '</div>' +
-      '<div class="icon" id="word-icon-'+i+'">' + WORD_ICONS[iconKey] + '</div>' +
-      '<div class="sub">' + item.m + '</div>';
-    grid.appendChild(card);
-
-    const iconEl = document.getElementById('word-icon-'+i);
-    const imgSrc = 'assets/word-' + iconKey + '.png';
-    const probe = new Image();
-    probe.onload = ()=>{
-      iconEl.innerHTML = '<img src="' + imgSrc + '" alt="" style="width:100%; height:100%; object-fit:contain;">';
-    };
-    probe.onerror = ()=>{ };
-    probe.src = imgSrc;
-  });
-  score.memoryTotal += current.words.length;
-  score.memoryHits += current.words.length;
-}
-
-function startQuiz(){
-  showStep('step-quiz');
-  const qd = current.quiz[0];
-  document.getElementById('quiz-question').innerText = qd.q;
-  renderMascot('quiz-mascot', current.id, 'book');
-  document.getElementById('quiz-hint-link').onclick = ()=> alert(current.quizHint);
-
-  clearInterval(timerInterval);
-  startTimer(179, document.getElementById('quiz-timer'));
-
-  const optsEl = document.getElementById('quiz-options');
-  optsEl.innerHTML = '';
-  document.getElementById('quiz-feedback').innerText = '';
-  document.getElementById('quiz-next').classList.add('hidden');
-
-  const opts = qd.options.slice().sort(()=>Math.random()-0.5);
-  opts.forEach(opt=>{
-    const btn = document.createElement('button');
-    btn.className = 'qopt';
-    btn.innerText = opt;
-    btn.onclick = ()=>{
-      document.querySelectorAll('.qopt').forEach(b=>b.disabled=true);
-      const fb = document.getElementById('quiz-feedback');
-      score.attentionTotal++;
-      if(opt === qd.answer){
-        btn.classList.add('correct');
-        fb.innerText = qd.explain;
-        fb.className = 'feedback good';
-        score.attentionHits++;
-        score.correctAnswers++;
-      } else {
-        btn.classList.add('wrong');
-        fb.innerText = 'Неверно. Правильный ответ — «' + qd.answer + '». ' + qd.explain;
-        fb.className = 'feedback bad';
-      }
-      document.getElementById('quiz-next').classList.remove('hidden');
-    };
-    optsEl.appendChild(btn);
-  });
-}
-
-const ORNAMENT_TILE_COUNT = 5;
-const ORNAMENT_FALLBACK_FILTER = {
-  tatar: 'none',
-  karelia: 'hue-rotate(150deg) saturate(1.15)',
-  kalmykia: 'hue-rotate(320deg) saturate(1.2)',
-  yakutia: 'hue-rotate(190deg) saturate(1.1)',
-};
-function ornamentTileSrc(region, index){ return 'assets/ornament-' + region + '-' + index + '.png'; }
-
-function buildOrnamentGame(){
-  const o = current.ornament;
-  const region = current.id;
-  document.getElementById('orn-desc').innerHTML = o.intro;
-  document.getElementById('orn-hint-link').onclick = ()=> alert(o.hint);
-
-  const nextBtn = document.getElementById('orn-next');
-  nextBtn.classList.add('hidden');
-  score.logicTotal++;
-
-  const order = [0,1,2,3,4];
-  const shuffled = order.slice().sort(()=>Math.random()-0.5);
-
-  const probe = new Image();
-  probe.onload  = ()=> renderOrnamentBoard(region, 'none');
-  probe.onerror = ()=> renderOrnamentBoard('tatar', ORNAMENT_FALLBACK_FILTER[region] || 'none');
-  probe.src = ornamentTileSrc(region, 1);
-
-  function renderOrnamentBoard(srcRegion, filter){
-    const strip = document.getElementById('orn-strip');
-    const bank = document.getElementById('orn-tilebank');
-    const progress = document.getElementById('orn-progress');
-    strip.innerHTML = ''; bank.innerHTML = ''; progress.innerHTML = '';
-
-    for(let i=0;i<ORNAMENT_TILE_COUNT;i++){
-      const slot = document.createElement('div');
-      slot.className = 'orn-slot';
-      strip.appendChild(slot);
-      const dot = document.createElement('div');
-      dot.className = 'orn-dot';
-      progress.appendChild(dot);
-    }
-
-    let nextExpected = 0, placedCount = 0;
-    shuffled.forEach(idx=>{
-      const tile = document.createElement('button');
-      tile.type = 'button';
-      tile.className = 'orn-tile';
-      tile.style.backgroundImage = "url('" + ornamentTileSrc(srcRegion, idx+1) + "')";
-      tile.style.filter = filter;
-      tile.setAttribute('draggable', 'true');
-      const place = ()=>{
-        if(tile.classList.contains('used')) return;
-        if(idx === nextExpected){
-          const slot = strip.children[nextExpected];
-          slot.classList.add('filled');
-          slot.style.backgroundImage = tile.style.backgroundImage;
-          slot.style.filter = filter;
-          tile.classList.add('used');
-          progress.children[nextExpected].classList.add('on');
-          nextExpected++; placedCount++;
-          if(placedCount === ORNAMENT_TILE_COUNT){
-            score.logicHits++; score.correctAnswers++;
-            nextBtn.classList.remove('hidden');
-          }
-        } else {
-          tile.classList.add('wrong');
-          setTimeout(()=> tile.classList.remove('wrong'), 300);
-        }
-      };
-      tile.onclick = place;
-      tile.ondragstart = e=> e.dataTransfer.setData('text/plain', String(idx));
-      bank.appendChild(tile);
-    });
-
-    Array.from(strip.children).forEach(slot=>{
-      slot.ondragover = e=> e.preventDefault();
-      slot.ondrop = e=>{
-        e.preventDefault();
-        const idx = Number(e.dataTransfer.getData('text/plain'));
-        const tile = Array.from(bank.children).find(t=>!t.classList.contains('used') && t.style.backgroundImage.includes("-"+(idx+1)+".png"));
-        if(tile) tile.click();
-      };
-    });
-  }
-}
-
-function buildRecipeView(){
-  const r = current.recipe;
-  document.getElementById('recipe-view-title').innerText = r.title;
-  document.getElementById('recipe-view-intro').innerHTML = r.intro;
-  document.getElementById('recipe-view-food').src = 'assets/food-' + (current.id === 'tatar' ? 'tatarstan' : current.id) + '.png';
-  document.getElementById('recipe-view-food').alt = r.title;
-  renderMascot('recipe-view-mascot', current.id, 'cook');
-
-  const list = document.getElementById('recipe-view-list');
-  list.innerHTML = '';
-  r.steps.forEach((t,i)=>{
-    const row = document.createElement('div');
-    row.className = 'recipe-step static';
-    row.innerHTML = '<span class="order-badge">'+(i+1)+'</span><span>'+t+'</span>';
-    list.appendChild(row);
-  });
-
-  document.getElementById('recipe-view-next').onclick = ()=>{ showStep('step-recipe-game'); };
-}
-
-const GAME_RECIPE_INTRO = 'Теперь расставь шаги по порядку — так, как ты их запомнил.<br><b>Нажимай на шаги по очереди.</b>';
-
-function buildRecipeGame(){
-  const r = current.recipe;
-  document.getElementById('recipe-title').innerText = r.title;
-  document.getElementById('recipe-intro').innerHTML = GAME_RECIPE_INTRO;
-  document.getElementById('recipe-game-food').src = 'assets/food-' + (current.id === 'tatar' ? 'tatarstan' : current.id) + '.png';
-  document.getElementById('recipe-game-food').alt = r.title;
-  renderMascot('recipe-game-mascot', current.id, 'cook');
-
-  const container = document.getElementById('recipe-steps');
-  const nextBtn = document.getElementById('recipe-next');
-  nextBtn.classList.add('hidden');
-  container.innerHTML = '';
-
-  const shuffled = r.steps.map((t,i)=>({t,i})).sort(()=>Math.random()-0.5);
-  let nextExpected = 0, placedCount = 0;
-  score.memoryTotal++;
-
-  shuffled.forEach(item=>{
-    const row = document.createElement('button');
-    row.className = 'recipe-step';
-    row.type = 'button';
-    row.innerHTML = '<span class="order-badge">•</span><span>'+item.t+'</span>';
-    row.onclick = ()=>{
-      if(row.classList.contains('placed')) return;
-      if(item.i === nextExpected){
-        row.classList.add('placed');
-        row.querySelector('.order-badge').innerText = nextExpected+1;
-        nextExpected++; placedCount++;
-        if(placedCount === r.steps.length){
-          score.memoryHits++; score.correctAnswers++;
-          nextBtn.classList.remove('hidden');
-        }
-      } else {
-        row.style.borderColor = 'var(--bad)';
-        setTimeout(()=>{ row.style.borderColor = ''; }, 400);
-      }
-    };
-    container.appendChild(row);
-  });
-
-  nextBtn.onclick = ()=>{ showResults(); };
-}
-
-function showResults(){
-  go('screen-results');
-  renderMascot('res-mascot', 'neutral', 'cap');
-  document.getElementById('res-greeting').innerText = current.greeting;
-
-  const memPct = Math.round((score.memoryHits/Math.max(score.memoryTotal,1))*100);
-  const attPct = Math.round((score.attentionHits/Math.max(score.attentionTotal,1))*100);
-  const logPct = Math.round((score.logicHits/Math.max(score.logicTotal,1))*100);
-  const smooth = v => Math.max(60, Math.min(98, v));
-  const mem = smooth(memPct || 80), att = smooth(attPct || 75), log = smooth(logPct || 80);
-  const overall = Math.round((mem+att+log)/3);
-
-  document.getElementById('res-pct').innerText = overall + '%';
-  document.getElementById('res-learned-line').innerHTML =
-    'Ты узнал: <b>' + current.words.length + '</b> ' + current.langGenitive + ' слов · <b>1</b> традицию · <b>1</b> рецепт';
-
-  animateBar('bar-memory','val-memory',mem);
-  animateBar('bar-attention','val-attention',att);
-  animateBar('bar-logic','val-logic',log);
-}
-function animateBar(barId, valId, pct){
-  const bar = document.getElementById(barId), val = document.getElementById(valId);
-  requestAnimationFrame(()=>{ bar.style.width = pct+'%'; });
-  val.innerText = pct+'%';
-}
-
-function goNextCulture(){
-  const order = ['tatar','karelia','kalmykia','yakutia'];
-  const idx = order.indexOf(current ? current.id : 'tatar');
-  openCulture(order[(idx+1) % order.length]);
-}
-
-renderCultureGrid();
-renderMascot('home-mascot', 'neutral', 'cap');
-renderMascot('how-mascot', 'neutral', 'flex');
-renderMascot('select-mascots', 'neutral', 'group');
-
-</script>
+<script src="js/data.js"></script>
+<script src="js/mascots.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/scoring.js"></script>
+<script src="js/core.js"></script>
+<script src="js/exercises/words.js"></script>
+<script src="js/exercises/quiz.js"></script>
+<script src="js/exercises/ornament.js"></script>
+<script src="js/exercises/recipe.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
