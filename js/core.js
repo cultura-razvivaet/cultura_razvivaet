@@ -14,7 +14,7 @@
                   результат, ctx.next() переходит к следующему заданию.
    ================================================================= */
 
-const NEUTRAL_SCREENS = ['screen-home','screen-how','screen-select','screen-history'];
+const NEUTRAL_SCREENS = ['screen-home','screen-how','screen-select','screen-map','screen-history'];
 const THEME_CLASSES = REGION_ORDER.map(id => 'theme-' + id);
 
 let current = null;          // выбранный регион (объект из CULTURES)

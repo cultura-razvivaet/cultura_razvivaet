@@ -25,6 +25,7 @@
       <div class="brand">Культура развивает</div>
       <div class="topnav">
         <span class="caps-note">Язык</span><span class="lang-pill">рус</span>
+        <a class="underline" onclick="openMap()">Карта</a>
         <a class="underline" onclick="go('screen-how')">О проекте</a>
         <!-- кнопка истории временно скрыта: <a class="underline" onclick="openHistory()">История</a> -->
         <span class="menu-btn"><svg viewBox="0 0 24 34" fill="none" stroke="#343DD5" stroke-width="2"><circle cx="12" cy="8" r="5"/><rect x="6" y="17" width="12" height="13"/></svg></span>
@@ -77,6 +78,21 @@
       <div class="caps-note how-caps">Память I Внимание I Логика</div>
       <button class="cta" onclick="go('screen-select')">Попробовать →</button>
     </div>
+  </section>
+
+  <!-- КАРТА РОССИИ -->
+  <section class="screen screen-neutral" id="screen-map">
+    <div class="topbar">
+      <a class="back-link" onclick="go('screen-home')">←Назад</a>
+      <div class="select-badge">Карта</div>
+    </div>
+    <h1 class="select-title">Выбери регион<br>на карте</h1>
+    <p class="select-subtitle">Цветные регионы — с тестами. Нажми на регион, чтобы начать.</p>
+    <div class="map-wrap">
+      <div class="map-box" id="map-box"></div>
+      <div class="map-tip" id="map-tip" role="status" aria-live="polite"></div>
+    </div>
+    <div class="map-legend" id="map-legend"></div>
   </section>
 
   <!-- SCREEN 3: SELECT CULTURE -->
@@ -285,6 +301,7 @@
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/map-data.js"></script>
 <script src="js/mascots.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/scoring.js"></script>
@@ -294,5 +311,6 @@
 <script src="js/exercises/ornament.js"></script>
 <script src="js/exercises/recipe.js"></script>
 <script src="js/app.js"></script>
+<script src="js/map.js"></script>
 </body>
 </html>
