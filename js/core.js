@@ -14,7 +14,9 @@
                   результат, ctx.next() переходит к следующему заданию.
    ================================================================= */
 
-const NEUTRAL_SCREENS = ['screen-home','screen-how','screen-select','screen-map','screen-history'];
+const MAIN_SCREENS = ['screen-cabinet','screen-train','screen-stats','screen-me','screen-about'];   // экраны с нижним/боковым меню
+const NEUTRAL_SCREENS = ['screen-splash','screen-welcome','screen-task','screen-taskresult','screen-about','screen-demo-result','screen-profile','screen-goal',
+  'screen-select','screen-history'].concat(MAIN_SCREENS);
 const THEME_CLASSES = REGION_ORDER.map(id => 'theme-' + id);
 
 let current = null;          // выбранный регион (объект из CULTURES)
@@ -61,6 +63,14 @@ function go(id){
   }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const nav = document.getElementById('mainnav');
+  if(nav){
+    nav.hidden = !MAIN_SCREENS.includes(id);
+    document.body.classList.toggle('has-nav', MAIN_SCREENS.includes(id));
+    nav.querySelectorAll('button').forEach(b=>{
+      if(b.dataset.nav === id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+  }
   window.scrollTo({top:0, behavior:'instant'});
 }
 

@@ -47,7 +47,7 @@ function themeColors(id){
   return out;
 }
 
-function renderRussiaMap(){
+function renderRussiaMapGeo(){
   const box = document.getElementById('map-box');
   if(typeof RUSSIA_MAP === 'undefined'){ box.textContent = 'Нет данных карты (js/map-data.js).'; return; }
   const proj = makeProjection();
@@ -85,7 +85,7 @@ function renderRussiaMap(){
       path.style.fill = c.fill; path.style.stroke = c.stroke;
       path.setAttribute('tabindex', '0'); path.setAttribute('role', 'button');
       path.setAttribute('aria-label', c0.name + ' — открыть тест');
-      const open = ()=> openCulture(r.id);
+      const open = ()=> openCulture(r.id, 'screen-about');
       path.addEventListener('click', open);
       path.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
     } else {
@@ -106,12 +106,86 @@ function renderRussiaMap(){
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'map-chip';
     b.innerHTML = '<span class="map-dot" style="background:' + colors[id].fill + ';border-color:' + colors[id].stroke + '"></span>' + CULTURES[id].name;
-    b.onclick = ()=> openCulture(id);
+    b.onclick = ()=> openCulture(id, 'screen-about');
     leg.appendChild(b);
   });
 }
 
-function openMap(){
-  if(!document.querySelector('#map-box svg')) renderRussiaMap();
-  go('screen-map');
+
+/* ---------- карта из готового SVG (assets/russia.svg) ----------
+   Подходит SVG, где у каждого региона есть <path> с data-title (название)
+   и/или data-code (ISO, напр. RU-TA) — как на atuin.ru/blog/karta-subektov-rf-v-svg.
+   Если файла нет — рисуется упрощённая карта из js/map-data.js. */
+const MAP_CODES = { tatar:'RU-TA', karelia:'RU-KR', kalmykia:'RU-KL', yakutia:'RU-SA' };
+
+function renderRussiaMap(){
+  if(typeof RUSSIA_REGIONS !== 'undefined' && renderRussiaMapRegions()) return;
+  fetch('assets/russia.svg').then(r => { if(!r.ok) throw 0; return r.text(); })
+    .then(txt => { if(!renderRussiaMapSvg(txt)) renderRussiaMapGeo(); })
+    .catch(() => renderRussiaMapGeo());
+}
+
+function renderRussiaMapSvg(txt){
+  const doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+  const src = doc.querySelector('svg'); if(!src || doc.querySelector('parsererror')) return false;
+  const paths = Array.from(src.querySelectorAll('path[data-title], path[data-code], path[title], path[id]'));
+  if(paths.length < 10) return false;
+  const items = paths.map(p => {
+    const name = p.getAttribute('data-title') || p.getAttribute('title') || '';
+    const code = (p.getAttribute('data-code') || p.id || '').toUpperCase();
+    const id = Object.keys(MAP_CODES).find(k => MAP_CODES[k] === code) || mapRegionId({ name });
+    return { d: p.getAttribute('d'), name, id };
+  });
+  return renderMapItems(src.getAttribute('viewBox') || '0 0 1000 600', items);
+}
+
+/* карта из js/map-regions.js (83 региона; id — код субъекта РФ) */
+const MAP_IDENT = { tatar:'16', karelia:'10', kalmykia:'08', yakutia:'14' };
+function renderRussiaMapRegions(){
+  const items = RUSSIA_REGIONS.regions.map(r => ({
+    d: r.d, name: r.name,
+    id: Object.keys(MAP_IDENT).find(k => MAP_IDENT[k] === r.id) || null,
+  }));
+  return renderMapItems(RUSSIA_REGIONS.viewBox, items);
+}
+
+function renderMapItems(viewBox, items){
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', viewBox);
+  svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', 'Карта России по регионам');
+  svg.classList.add('map-svg');
+  const tip = document.getElementById('map-tip');
+  const colors = {}; Object.keys(MAP_REGIONS).forEach(id => colors[id] = themeColors(id));
+  items.sort((a, b)=> (a.id ? 1 : 0) - (b.id ? 1 : 0)).forEach(r=>{
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', r.d);
+    path.setAttribute('class', 'map-region' + (r.id ? ' map-region--active' : ''));
+    path.setAttribute('vector-effect', 'non-scaling-stroke');
+    if(r.id){
+      const c = colors[r.id];
+      path.style.fill = c.fill; path.style.stroke = c.stroke;
+      path.setAttribute('tabindex', '0'); path.setAttribute('role', 'button');
+      path.setAttribute('aria-label', CULTURES[r.id].name + ' — открыть тест');
+      const open = ()=> openCulture(r.id, 'screen-about');
+      path.addEventListener('click', open);
+      path.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
+    } else { path.style.fill = MAP_GREY; path.style.stroke = MAP_GREY_STROKE; }
+    const label = r.id ? CULTURES[r.id].name : r.name;
+    const show = ()=>{ if(!label) return; tip.textContent = label + (r.id ? ' — нажми, чтобы начать тест' : ' — теста пока нет'); tip.classList.add('on'); };
+    const hide = ()=> tip.classList.remove('on');
+    path.addEventListener('mouseenter', show); path.addEventListener('mouseleave', hide);
+    path.addEventListener('focus', show); path.addEventListener('blur', hide);
+    svg.appendChild(path);
+  });
+  const box = document.getElementById('map-box'); box.innerHTML = ''; box.appendChild(svg);
+  const leg = document.getElementById('map-legend'); leg.innerHTML = '';
+  Object.keys(MAP_REGIONS).forEach(id=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'map-chip';
+    b.innerHTML = '<span class="map-dot" style="background:' + colors[id].fill + ';border-color:' + colors[id].stroke + '"></span>' + CULTURES[id].name;
+    b.onclick = ()=> openCulture(id, 'screen-about');
+    leg.appendChild(b);
+  });
+  return true;
 }

@@ -28,7 +28,11 @@ function renderCultureGrid(){
   });
 }
 
-function openCulture(id){
+/* откуда открыли культуру: список культур или карта («О проекте») — туда ведёт «Назад» */
+let cultureFrom = 'screen-select';
+function openCulture(id, from){
+  if(from) cultureFrom = from;
+  else if(!document.querySelector('#screen-intro.active, #screen-exercise.active, #screen-results.active')) cultureFrom = 'screen-select';
   current = CULTURES[id];
   const app = document.getElementById('app');
   app.classList.remove(...THEME_CLASSES);
@@ -43,15 +47,19 @@ function openCulture(id){
   document.getElementById('ex-back').innerText = '← ' + current.native;
   document.getElementById('intro-timer').innerHTML = hourglassSVG() + ' 09:59';
 
+  const back = document.getElementById('intro-back');
+  if(back) back.innerText = cultureFrom === 'screen-about' ? '← К карте' : '← Культуры';
+  const rb = document.getElementById('res-back');
+  if(rb) rb.innerText = cultureFrom === 'screen-about' ? '← К карте' : '← К тренировкам';
   go('screen-intro');
 }
 
 /* ---------- результат ---------- */
 
 function resultComment(overall){
-  if(overall >= 85) return 'Отличная работа';
-  if(overall >= 60) return 'Хороший результат — есть куда расти';
-  return 'Попробуй ещё раз — получится лучше';
+  if(overall >= 85) return 'Отличная работа!';
+  if(overall >= 60) return 'Хороший результат — есть куда расти!';
+  return 'Попробуй ещё раз — получится <b>лучше</b>!';
 }
 
 function showResults(){
@@ -60,8 +68,9 @@ function showResults(){
   document.getElementById('res-greeting').innerText = current.greeting;
 
   const result = buildResult(session.results);
+  recordCultureSession(current.id, result);
   document.getElementById('res-pct').innerText = result.overall + '%';
-  document.querySelector('#screen-results .result-sub').innerText = resultComment(result.overall);
+  document.querySelector('#screen-results .result-sub').innerHTML = resultComment(result.overall);
 
   const words = session.words.length;
   const traditions = session.plan.filter(e=>e.type === 'ornament').length;
@@ -143,6 +152,7 @@ function clearHistoryUI(){
 }
 
 renderCultureGrid();
-renderMascot('home-mascot', 'neutral', 'cap');
-renderMascot('how-mascot', 'neutral', 'flex');
 renderMascot('select-mascots', 'neutral', 'group');
+
+function backFromCulture(){ if(cultureFrom === 'screen-about') openAbout(); else go('screen-select'); }
+function backFromResults(){ if(cultureFrom === 'screen-about') openAbout(); else openTraining(); }
