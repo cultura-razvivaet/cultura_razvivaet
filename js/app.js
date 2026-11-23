@@ -18,10 +18,10 @@ function renderCultureGrid(){
     btn.innerHTML =
       '<span class="culture-thumb culture-thumb--'+id+'"></span>' +
       '<span class="culture-name">'+c.name+'</span>';
-    // картинка карточки: c.thumb из data.js или assets/culture-<id>.png.
+    // Картинка карточки: c.thumb из data.js или иллюстрация уровня.
     // Путь делаем абсолютным от страницы: иначе url() в CSS-переменной
     // браузер считает от папки css/ и ищет css/assets/.
-    const thumbUrl = new URL(assetUrl(c.thumb || 'culture-' + id + '.png'), document.baseURI).href;
+    const thumbUrl = new URL((c.thumb ? assetUrl(c.thumb) : regionArt(id)), document.baseURI).href;
     btn.querySelector('.culture-thumb').style.setProperty('--thumb-img', 'url("' + thumbUrl + '")');
     btn.onclick = ()=>{ openCulture(id); };
     grid.appendChild(btn);
@@ -51,7 +51,7 @@ function openCulture(id, from){
   if(back) back.innerText = cultureFrom === 'screen-about' ? '← К карте' : '← Культуры';
   const rb = document.getElementById('res-back');
   if(rb) rb.innerText = cultureFrom === 'screen-about' ? '← К карте' : '← К тренировкам';
-  go('screen-intro');
+  go('screen-intro', { region:id, from:cultureFrom });
 }
 
 /* ---------- результат ---------- */

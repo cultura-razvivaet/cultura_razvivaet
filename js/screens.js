@@ -8,27 +8,29 @@ const $ = id => document.getElementById(id);
 const catById = id => CATEGORIES.find(c => c.id === id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 
-/* ---------- аватар: PNG из assets/ или цветная заглушка ---------- */
+/* ---------- аватар: SVG из assets/ или цветная заглушка ---------- */
 function avatarHTML(file, nick, cls){
-  const i = Math.max(0, AVATARS.findIndex(a => a.file === file));
-  const [c1, c2] = AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length];
+  const avatar = avatarOption(file);
+  const [c1, c2] = avatar.colors;
   const letter = esc((nick || '?').trim().charAt(0).toUpperCase());
   return '<span class="avatar ' + (cls || '') + '" style="--c1:' + c1 + ';--c2:' + c2 + '">' +
     '<span class="avatar-letter" aria-hidden="true">' + letter + '</span>' +
-    '<img src="' + esc(assetUrl(file)) + '" alt="" onerror="this.remove()"></span>';
+    '<img src="' + esc(assetUrl(avatar.file)) + '" alt="" onerror="this.remove()"></span>';
 }
 
 function userHead(){
   const p = loadProfile() || { nick:'Гость', avatar:AVATARS[0].file };
   return '<div class="brand brand--lab">Культура развивает <span>by CULTLAB</span></div>' +
-    '<div class="user-tools"><button class="user-chip" type="button" onclick="openProfileEdit()" aria-label="Изменить аватар и имя: ' + esc(p.nick) + '">' +
-    avatarHTML(p.avatar, p.nick, 'sm') + '<span class="user-name">' + esc(p.nick) + '</span></button>' +
-    '<button class="icon-btn" type="button" onclick="openMe()" aria-label="Настройки и профиль">' + icon('sliders', 20) + '</button></div>';
+    '<div class="user-tools"><button class="nick-pill" type="button" onclick="openMe()" aria-label="Профиль: ' + esc(p.nick) + '">' + esc(p.nick) + '</button>' +
+    '<button class="user-ava" type="button" onclick="openMe()" aria-label="Мой профиль">' + avatarHTML(p.avatar, p.nick, 'sm') + '</button></div>';
 }
 
 /* ---------- заставка и первичный маршрут ---------- */
 function route(){
-  if(loadProfile()) openCabinet(); else openWelcome();
+  const saved = history.state?.cultureRoute;
+  if(saved && (loadProfile() || ['screen-welcome','screen-practice','screen-profile'].includes(saved.id))){
+    restoreRoute(history.state);
+  } else if(loadProfile()) openCabinet(); else openWelcome();
 }
 
 /* ---------- знакомство с постепенным появлением ---------- */
@@ -45,7 +47,7 @@ function setupReveal(root){
 
 const WELCOME_FACTS = [
   'Мозг взрослого человека весит около <b>1,4 кг</b> — это примерно <b>2%</b> массы тела, но он потребляет около <b>20%</b> энергии организма.',
-  '<b>Нейропластичность</b>: мозг перестраивает связи между нейронами в течение всей жизни, поэтому тренироваться полезно в любом возрасте.',
+  '<b>Нейропластичность</b>: мозг перестраивает связи между нейронами в течение всей жизни, и этот процесс продолжается во взрослом возрасте.',
   'Во время сна мозг закрепляет <b>воспоминания</b>. Недосып ухудшает запоминание нового.',
 ];
 function openWelcome(){
@@ -114,8 +116,8 @@ function buildProfile(edit){
     grid.appendChild(b);
   });
   validateProfile();
-  go('screen-profile');
-  setTimeout(()=> $('profile-nick').focus(), 50);
+  go('screen-profile', { edit });
+  if(!restoringRoute) $('profile-nick').focus({ preventScroll:true });
 }
 
 function validateProfile(){
@@ -130,12 +132,19 @@ function onProfileSubmit(e){
   if(!profileDraft.avatar) return;
   const old = loadProfile();
   saveProfile({ nick, avatar: profileDraft.avatar, goal: old ? old.goal : null });
-  if(profileDraft.edit) openMe(); else openGoal(false);
+  if(profileDraft.edit) openMe();
+  else {
+    const demo = readJSON(safeStore('sessionStorage'), DEMO_KEY, null);
+    if(demo?.practice) recordPractice(practiceById(demo.practice));
+    saveDemoResult(null);
+    openGoal(false);
+  }
 }
 
 function resetAll(){
   if(!confirm('Удалить профиль и всю статистику на этом устройстве?')) return;
   clearProfile(); clearStats(); clearHistory();
+  try{ localStorage.removeItem(SUDOKU_DRAFT_KEY); }catch(e){}
   try{ sessionStorage.clear(); }catch(e){}
   openWelcome();
 }
@@ -160,7 +169,7 @@ function openGoal(fromSettings){
     grid.appendChild(b);
   });
   $('goal-next').disabled = !goalDraft;
-  go('screen-goal');
+  go('screen-goal', { fromSettings:goalFromSettings });
 }
 function onGoalNext(){
   if(!goalDraft) return;
@@ -170,71 +179,43 @@ function onGoalNext(){
 }
 
 /* ---------- рекомендации ---------- */
-function recommendCategory(){
-  const p = loadProfile(), s = loadStats();
-  const goal = GOALS.find(g => p && g.id === p.goal);
-  const pool = goal ? goal.categories : CATEGORIES.map(c => c.id);
-  const done = id => (s.cats[id] ? s.cats[id].done : 0);
-  return catById(pool.slice().sort((a, b)=> done(a) - done(b))[0]);
-}
 function recoCard(){
-  const c = recommendCategory(); if(!c) return '';
-  return '<button class="reco-card" type="button" onclick="startCategory(\'' + c.id + '\')" style="--cat:' + c.color + '">' +
-    '<span class="reco-ico">' + icon(c.icon, 32) + '</span>' +
-    '<span class="reco-text"><small>Продолжить тренировку</small><b>' + esc(c.name) + '</b><span>' + esc(c.desc) + '</span></span>' +
-    '<span class="reco-go" aria-hidden="true">→</span></button>';
+  const profile = loadProfile();
+  const progress = practiceStats();
+  const goal = GOALS.find(g => profile && g.id === profile.goal);
+  const preferred = PRACTICE_SKILLS.filter(skill => goal?.categories.includes(skill.id));
+  const choices = preferred.length ? preferred : PRACTICE_SKILLS;
+  const skill = choices.slice().sort((a, b) => (progress.counts[a.id] || 0) - (progress.counts[b.id] || 0))[0];
+  const item = skill.examples.map(practiceById).find(exercise => exercise.id !== progress.last);
+  return '<button class="reco-card" type="button" onclick="openPractice(&quot;' + item.id + '&quot;)" style="--cat:var(--lav-accent)">' +
+    '<span class="reco-ico">' + icon(skill.icon, 32) + '</span>' +
+    '<span class="reco-text"><small>Упражнение для паузы</small><b>' + esc(item.title) +
+    '</b><span>' + esc(skill.name) + ' · ' + esc(item.duration) + '</span></span></button>';
 }
 
-/* Картинки категорий: assets/cat-<id>.png (модуль не завершён) и assets/cat-<id>-done.png (завершён).
-   Нет файла — показывается градиент с иконкой. Модуль считается завершённым при CAT_DONE_AT выполненных заданиях. */
-const CAT_DONE_AT = 10;
-function catArtError(img, id, doneTried){
-  if(doneTried){ img.onerror = ()=> img.remove(); img.src = assetUrl('cat-' + id + '.png'); } else img.remove();
-}
-function catCard(c){
-  const st = loadStats().cats[c.id] || { done:0, correct:0 };
-  const done = st.done >= CAT_DONE_AT;
-  const src = assetUrl('cat-' + c.id + (done ? '-done' : '') + '.png');
-  return '<button class="cat-card' + (done ? ' is-done' : '') + '" type="button" onclick="startCategory(\'' + c.id + '\')" style="--cat:' + c.color + '">' +
-    '<span class="cat-art"><span class="cat-art-ico">' + icon(c.icon, 30) + '</span>' +
-    '<img src="' + esc(src) + '" alt="" onerror="catArtError(this,\'' + c.id + '\',' + done + ')"></span>' +
-    '<span class="cat-body"><b>' + esc(c.name) + '</b>' +
-    '<small>' + (st.done ? 'Выполнено: ' + st.done : 'Ещё не пробовал') + '</small></span></button>';
-}
+const REGION_NATIVE = { tatar:'Татарча', yakutia:'Саха тыла', karelia:'Karjalan kieli', kalmykia:'Хальмг келн' };
 
-/* серия дней: цвет огонька и «открытый регион» (по макету дизайнера) */
-const STREAK_TIERS = [
-  { min:0,   color:'#8d909b', region:null },
-  { min:1,   color:'#2f80ed', region:'Татарстан', img:'streak-tatar.png',    bg:'#bfe4f5' },
-  { min:11,  color:'#4caf2e', region:'Якутия',    img:'streak-yakutia.png',  bg:'#cfe9c0' },
-  { min:31,  color:'#f2c200', region:'Карелия',   img:'streak-karelia.png',  bg:'#f6e3a8' },
-  { min:71,  color:'#f28a1b', region:'Калмыкия',  img:'streak-kalmykia.png', bg:'#fbd0a0' },
-  { min:101, color:'#e23b2e', region:'Бурятия',   img:'streak-buryatia.png', bg:'#f5a9a0' },
-  { min:201, color:'#e0399c', region:'Чукотка',   img:'streak-chukotka.png', bg:'#f6b7dc' },
-];
-function streakTier(n){ let t = STREAK_TIERS[0]; STREAK_TIERS.forEach(x => { if(n >= x.min) t = x; }); return t; }
-
-function dashHTML(){
-  const s = loadStats(), L = levelInfo(s.xp), total = Object.values(s.cats).reduce((a, c)=> a + c.done, 0);
-  const ok = Object.values(s.cats).reduce((a, c)=> a + c.correct, 0);
-  const pct = Math.round(L.into / L.need * 100);
-  const streak = currentStreak(s), tier = streakTier(streak);
-  const art = tier.region ? '<span class="streak-art" aria-hidden="true" style="--art:url(\'' + esc(assetUrl(tier.img)) + '\');--bg:' + tier.bg + '"></span>' : '';
-  return '<div class="dash-card"><small>Уровень</small><div class="lvl-row"><b class="dash-num">' + L.level + '</b>' +
-      '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>' +
-      '<small>' + L.into + ' / ' + L.need + ' XP</small></div>' +
-    '<div class="dash-card"><small>Задания</small><b class="dash-num">' + total + '</b><small>Верных: ' + ok + '</small></div>' +
-    '<div class="dash-card streak" style="--tier:' + tier.color + '">' + art +
-      '<small>Серия дней</small><b class="dash-num">' + icon('flame', 24) + ' ' + streak + '</b><small>Подряд</small>' +
-      '<span class="streak-region">' + (tier.region ? esc(tier.region) : 'Регион не открыт') + '</span></div>';
+function cabinetDashHTML(){
+  const stats = practiceStats();
+  const days = Object.keys(stats.days).length;
+  const level = practiceLevel(stats);
+  const region = REGION_LEVELS[level - 1];
+  const next = REGION_LEVELS[level];
+  const pct = next ? Math.round((days - region.days) * 100 / (next.days - region.days)) : 100;
+  const art = '<span class="region-art" aria-hidden="true" style="--art:url(&quot;' + new URL(regionArt(region.id), document.baseURI).href + '&quot;);--bg:' + region.bg + '"></span>';
+  return '<div class="lvl2-card"><div class="lvl2-left"><b class="lvl2-title">Уровень</b>' +
+    '<div class="lvl-row"><b class="lvl2-num">' + level + '</b>' +
+    '<div class="progress" role="progressbar" aria-label="Следующий уровень" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>' +
+    '<small>' + (next ? days + ' / ' + next.days + ' дней практики' : 'Все уровни открыты') + '</small></div>' +
+    '<div class="lvl2-region"><b>' + esc(PRACTICE_REGIONS[region.id]) + '</b><span>' + esc(REGION_NATIVE[region.id] || '') + '</span></div>' + art + '</div>' +
+    '<div class="today-card"><div class="today-title">Сделано <span>сегодня</span></div><b class="today-num">' + (stats.days[dayKey()] || 0) + '</b><small>Упражнений</small></div>';
 }
 
-/* ---------- экраны главного меню ---------- */
 function openCabinet(){
   $('cabinet-head').innerHTML = userHead();
-  $('cabinet-dash').innerHTML = dashHTML();
+  $('cabinet-dash').innerHTML = cabinetDashHTML();
   $('cabinet-reco').innerHTML = recoCard();
-  $('cabinet-cats').innerHTML = CATEGORIES.map(catCard).join('');
+  $('cabinet-cats').innerHTML = practiceSkillCards(practiceStats());
   go('screen-cabinet');
 }
 
@@ -250,14 +231,41 @@ function miniRussia(){
   return _miniRu;
 }
 
-function openTraining(){
+function openTraining(){ openPracticeLibrary(); }
+
+function openPracticeLibrary(filter = 'all'){
+  const region = Object.hasOwn(PRACTICE_REGIONS, filter) ? PRACTICE_REGIONS[filter] : null;
+  const skill = skillById(filter);
+  const title = region || skill?.name || (Object.hasOwn(PRACTICE_BLOCKS, filter) ? PRACTICE_BLOCKS[filter] : 'Упражнения');
+  const entries = PRACTICES.filter(item => filter === 'all' || item.block === filter || item.skill === filter || item.region === filter);
   $('train-head').innerHTML = userHead();
-  $('train-pills').innerHTML = CATEGORIES.map(c =>
-    '<button class="cat-pill" type="button" onclick="startCategory(\'' + c.id + '\')">' + icon(c.icon, 20) + ' ' + esc(c.name) + '</button>').join('');
   $('train-reco').innerHTML = recoCard();
   $('train-map-art').innerHTML = miniRussia();
   renderCarousel();
-  go('screen-train');
+  const list = $('train-catalog');
+  list.innerHTML = '<h2 class="section-title">' + esc(title) + '</h2>';
+  const controls = h('div', 'practice-filters');
+  for(const [key, label] of Object.entries({ all:'Все', ...PRACTICE_BLOCKS })){
+    const button = practiceButton(label, () => openPracticeLibrary(key), 'practice-choice');
+    button.setAttribute('aria-pressed', String(key === filter));
+    controls.append(button);
+  }
+  list.append(controls);
+  const groups = new Set(entries.map(item => item.block));
+  if(!entries.length) list.append(h('p', 'task-q', 'Для этого региона упражнения пока не добавлены.'));
+  for(const group of groups){
+    if(groups.size > 1) list.append(h('h3', 'practice-group-title', esc(PRACTICE_BLOCKS[group])));
+    const cards = h('div', 'practice-catalog');
+    for(const item of entries.filter(entry => entry.block === group)){
+      const card = practiceButton('', () => openPractice(item.id, { filter }), 'practice-list-card');
+      card.innerHTML = '<small>' + esc(item.region ? PRACTICE_REGIONS[item.region] : skillById(item.skill).name) +
+        ' · ' + esc(item.duration) + '</small><b>' + esc(item.title) + '</b>';
+      cards.append(card);
+    }
+    list.append(cards);
+  }
+  go('screen-train', { filter });
+  if(filter !== 'all') list.scrollIntoView({ block:'start' });
 }
 
 const HISTORY_DAYS = {
@@ -299,20 +307,66 @@ function renderCarousel(){
   });
 }
 
-function openStats(){
-  const s = loadStats();
-  $('stats-head').innerHTML = userHead();
-  $('stats-dash').innerHTML = dashHTML();
-  $('stats-cats').innerHTML = CATEGORIES.map(c=>{
-    const x = s.cats[c.id] || { done:0, correct:0 }, pct = x.done ? Math.round(x.correct / x.done * 100) : 0;
-    return '<div class="stat-row" style="--cat:' + c.color + '"><span class="stat-name">' + icon(c.icon, 18) + ' ' + esc(c.name) + '</span>' +
-      '<div class="progress" role="progressbar" aria-label="' + esc(c.name) + '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-      '<span class="stat-val">' + (x.done ? x.correct + '/' + x.done : '—') + '</span></div>';
+function practiceSkillCards(stats){
+  return PRACTICE_SKILLS.map(skill => '<article class="skill-card"><h2><button type="button" onclick="openPracticeLibrary(&quot;' +
+    skill.id + '&quot;)">' + esc(skill.name) + ' <b>' + (stats.counts[skill.id] || 0) + '</b></button></h2>' +
+    '<div class="skill-examples">' + skill.examples.map(id => '<button type="button" onclick="openPractice(&quot;' +
+    id + '&quot;)">' + esc(practiceById(id).title) + '</button>').join('') + '</div><p>' + esc(skill.desc) + '</p></article>').join('');
+}
+
+function radarHTML(stats){
+  const labels = [
+    [160,29,'middle'], [268,119,'start'], [228,259,'start'],
+    [92,259,'end'], [52,119,'end'],
+  ];
+  const values = PRACTICE_SKILLS.map(skill => stats.counts[skill.id] || 0);
+  const point = (i, ratio) => {
+    const a = i * Math.PI * 2 / 5 - Math.PI / 2;
+    return [160 + Math.cos(a) * 103 * ratio, 146 + Math.sin(a) * 103 * ratio].map(n => n.toFixed(2)).join(',');
+  };
+  const points = ratios => ratios.map((ratio, i) => point(i, ratio)).join(' ');
+  // Общая шкала без верхнего предела: ось растёт только при выполнении её упражнений.
+  const progress = values.map(value => value / (value + 4));
+  const markers = progress.map((ratio, i) => {
+    if(!ratio) return '';
+    const [x,y] = point(i, ratio).split(',');
+    return '<circle class="radar-marker" cx="' + x + '" cy="' + y + '" r="3.2"><title>' +
+      esc(PRACTICE_SKILLS[i].name) + ' · ' + values[i] + '</title></circle>';
   }).join('');
-  $('stats-log').innerHTML = s.log.length ? s.log.slice(0, 10).map(l=>{
-    const c = catById(l.c), name = c ? c.name : 'Культуры России' + (l.score !== undefined ? ' · ' + l.score + '%' : '');
-    return '<li class="' + (l.ok ? 'good' : 'bad') + '">' + icon(l.ok ? 'check' : 'x', 16) + ' ' + esc(name) + ' <small>' + formatHistoryDate(l.at) + '</small></li>';
-  }).join('') : '<li>Пока пусто — выполни первое задание.</li>';
+  return '<svg viewBox="-18 0 356 277" role="img" aria-labelledby="radar-title radar-desc">' +
+    '<title id="radar-title">Практика по пяти навыкам</title><desc id="radar-desc">' +
+    PRACTICE_SKILLS.map((skill, i) => esc(skill.name) + ' ' + values[i]).join(', ') + '</desc>' +
+    [.25,.5,.75,1].map(ratio => '<polygon class="radar-grid" points="' + points(values.map(() => ratio)) + '"/>').join('') +
+    labels.map((_, i) => { const [x, y] = point(i, 1).split(','); return '<line class="radar-grid" x1="160" y1="146" x2="' + x + '" y2="' + y + '"/>'; }).join('') +
+    '<polygon class="radar-data" points="' + points(progress) + '"/>' +
+    markers + labels.map(([x, y, anchor], i) => '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '">' + esc(PRACTICE_SKILLS[i].name) + '</text>').join('') +
+    '</svg>';
+}
+
+function renderPracticeStats(stats = practiceStats()){
+  const level = practiceLevel(stats);
+  const days = Object.keys(stats.days).length;
+  const total = Object.values(stats.counts).reduce((sum, count) => sum + count, 0);
+  $('stats-levels').innerHTML = REGION_LEVELS.map((region, i) => {
+    const opened = i < level;
+    const name = PRACTICE_REGIONS[region.id];
+    const content = '<img src="' + esc(regionArt(region.id)) + '" alt="">' +
+      '<b>' + (i + 1) + ' уровень</b>' + (opened ? '' : '<span class="level-lock">' +
+      '<svg viewBox="0 0 32 36" aria-hidden="true"><rect x="5" y="14" width="22" height="18" rx="3"/><path d="M10 14V9a6 6 0 0 1 12 0v5"/><circle cx="16" cy="21" r="2"/><path d="M16 23v4"/></svg></span>');
+    const label = (i + 1) + ' уровень, ' + name + (opened ? '' : ', откроется после ' + region.days + ' дней практики');
+    return '<button type="button" class="level-tile' + (opened ? '' : ' is-locked') + '" aria-label="' + esc(label) +
+      '" title="' + esc(label) + '"' + (opened ? ' onclick="openPracticeLibrary(&quot;' + region.id + '&quot;)"' : ' aria-disabled="true"') + '>' + content + '</button>';
+  }).join('');
+  $('stats-radar').innerHTML = radarHTML(stats);
+  $('practice-totals').innerHTML = '<div><b>' + total + '</b><span>Упражнений выполнено</span></div>' +
+    '<div><b>' + days + '</b><span>Дней с практикой</span></div>';
+  $('practice-tallies').innerHTML = PRACTICE_SKILLS.map(skill => '<tr><th scope="row">' + esc(skill.name) +
+    '</th><td>' + (stats.counts[skill.id] || 0) + '</td></tr>').join('');
+  $('stats-skills').innerHTML = practiceSkillCards(stats);
+}
+function openStats(){
+  $('stats-head').innerHTML = userHead();
+  renderPracticeStats();
   go('screen-stats');
 }
 
@@ -327,17 +381,52 @@ function openMe(){
   const g = GOALS.find(x => x.id === p.goal);
   $('me-head').innerHTML = userHead();
   $('me-avatar').innerHTML = avatarHTML(p.avatar, p.nick, 'xl');
-  $('me-nick').textContent = p.nick;
-  $('me-goal').textContent = g ? 'Цель: ' + g.name : 'Цель не выбрана';
+  $('me-nick').textContent = p.nick.toUpperCase();
+  $('me-lvl').textContent = practiceLevel();
+  $('me-goal').textContent = g ? g.name : 'не выбрана';
   $('set-fx').checked = sfx.state.fx;
   go('screen-me');
+}
+
+/* ---------- ссылка для друга ---------- */
+function openFriendDialog(){
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.hash = '';
+  const local = url.protocol === 'file:' || ['localhost','127.0.0.1','[::1]','0.0.0.0'].includes(url.hostname);
+  $('friend-url').value = url.href;
+  $('friend-local').hidden = !local;
+  $('friend-status').textContent = '';
+  $('friend-dialog').showModal();
+}
+
+async function copyFriendUrl(){
+  const field = $('friend-url');
+  const status = $('friend-status');
+  try{
+    await navigator.clipboard.writeText(field.value);
+    status.textContent = 'Ссылка скопирована.';
+  }catch{
+    field.focus();
+    field.select();
+    let copied = false;
+    try{ copied = document.execCommand('copy'); }catch{}
+    status.textContent = copied ? 'Ссылка скопирована.' : 'Ссылка выделена. Скопируй её через меню браузера.';
+  }
 }
 
 /* ---------- запуск ---------- */
 function initScreens(){
   renderMascot('splash-mascot', 'neutral', 'cap');
+  $('friend-btn').addEventListener('click', openFriendDialog);
+  $('friend-copy').addEventListener('click', copyFriendUrl);
+  window.addEventListener('popstate', () => { if($('friend-dialog').open) $('friend-dialog').close(); });
+  window.addEventListener('practice:recorded', event => renderPracticeStats(event.detail));
+  window.addEventListener('storage', event => {
+    if(event.key === STATS_KEY || event.key === null) renderPracticeStats();
+  });
   $('welcome-yes').addEventListener('click', onWelcomeYes);
-  $('welcome-try').addEventListener('click', startDemo);
+  $('welcome-try').addEventListener('click', () => openPractice('color', { demo:true }));
   $('demo-go').addEventListener('click', afterDemo);
   $('profile-form').addEventListener('submit', onProfileSubmit);
   $('profile-nick').addEventListener('input', ()=>{ $('profile-error').textContent = ''; validateProfile(); });

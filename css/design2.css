@@ -307,7 +307,18 @@
 .fb-dots{position:absolute; left:-64px; top:50%; width:0; height:0; pointer-events:none;}
 .fb-dots::before,.fb-dots::after{content:""; position:absolute; border-radius:50%; background:#a4aae8; opacity:.85; transform:translateY(-50%);}
 .fb-dots::before{width:54px; height:54px; left:22px;} .fb-dots::after{width:32px; height:32px; left:0;}
-.friend-soon{text-align:center; margin:12px 0 0; color:var(--ink2); min-height:1.4em;}
+/* Ссылка для друга */
+.friend-dialog{width:min(480px,calc(100% - 32px));max-height:calc(100% - 40px);padding:clamp(20px,4vw,32px);
+  border:1px solid #d0d4ed;border-radius:22px;background:#fff;color:var(--ink);box-shadow:0 18px 65px #22244f26}
+.friend-dialog::backdrop{background:#171b4180}
+.friend-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.friend-heading h2{font-size:clamp(19px,3.4vw,25px);margin:0}
+.friend-dismiss{min-width:36px;min-height:36px;cursor:pointer;border:0;border-radius:50%;background:#eef0fa;color:var(--lav-accent);font:700 24px/1 system-ui}
+.friend-dialog p{font-size:14px;line-height:1.4;margin:12px 0}
+.friend-local{color:var(--ink2);background:#edf0fa;border-radius:10px;padding:10px}
+.friend-dialog .task-input{margin:0 0 12px;width:100%}
+.friend-dialog .btn-primary{width:100%;min-height:42px}
+.friend-status{font-size:13px;color:var(--ink2);min-height:1.25em;margin-top:9px}
 #screen-me .settings{display:flex; justify-content:center; margin-top:8px;}
 @media (max-width:640px){
   .me-top{flex-direction:column; text-align:center;} .me-nick{justify-content:center;}

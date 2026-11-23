@@ -85,7 +85,7 @@ function renderRussiaMapGeo(){
       path.style.fill = c.fill; path.style.stroke = c.stroke;
       path.setAttribute('tabindex', '0'); path.setAttribute('role', 'button');
       path.setAttribute('aria-label', c0.name + ' — открыть тест');
-      const open = ()=> openCulture(r.id, 'screen-about');
+      const open = ()=> openPracticeLibrary(r.id);
       path.addEventListener('click', open);
       path.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
     } else {
@@ -106,7 +106,7 @@ function renderRussiaMapGeo(){
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'map-chip';
     b.innerHTML = '<span class="map-dot" style="background:' + colors[id].fill + ';border-color:' + colors[id].stroke + '"></span>' + CULTURES[id].name;
-    b.onclick = ()=> openCulture(id, 'screen-about');
+    b.onclick = ()=> openPracticeLibrary(id);
     leg.appendChild(b);
   });
 }
@@ -167,7 +167,7 @@ function renderMapItems(viewBox, items){
       path.style.fill = c.fill; path.style.stroke = c.stroke;
       path.setAttribute('tabindex', '0'); path.setAttribute('role', 'button');
       path.setAttribute('aria-label', CULTURES[r.id].name + ' — открыть тест');
-      const open = ()=> openCulture(r.id, 'screen-about');
+      const open = ()=> openPracticeLibrary(r.id);
       path.addEventListener('click', open);
       path.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
     } else { path.style.fill = MAP_GREY; path.style.stroke = MAP_GREY_STROKE; }
@@ -184,7 +184,7 @@ function renderMapItems(viewBox, items){
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'map-chip';
     b.innerHTML = '<span class="map-dot" style="background:' + colors[id].fill + ';border-color:' + colors[id].stroke + '"></span>' + CULTURES[id].name;
-    b.onclick = ()=> openCulture(id, 'screen-about');
+    b.onclick = ()=> openPracticeLibrary(id);
     leg.appendChild(b);
   });
   return true;

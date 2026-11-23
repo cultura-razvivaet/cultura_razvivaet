@@ -26,6 +26,7 @@ const sfx = (function(){
   }
   return {
     state: st,
+    note(freq){ if(st.fx) tone(freq, 0, .36, .08, 'triangle'); },
     click(){ if(st.fx) tone(520, 0, 0.06, 0.05, 'triangle'); },
     ok(){ if(st.fx){ tone(660, 0, 0.14, 0.07); tone(880, 0.12, 0.2, 0.07); } },
     bad(){ if(st.fx){ tone(220, 0, 0.18, 0.07, 'sawtooth'); tone(165, 0.14, 0.25, 0.07, 'sawtooth'); } },

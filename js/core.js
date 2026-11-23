@@ -16,7 +16,7 @@
 
 const MAIN_SCREENS = ['screen-cabinet','screen-train','screen-stats','screen-me','screen-about'];   // экраны с нижним/боковым меню
 const NEUTRAL_SCREENS = ['screen-splash','screen-welcome','screen-task','screen-taskresult','screen-about','screen-demo-result','screen-profile','screen-goal',
-  'screen-select','screen-history'].concat(MAIN_SCREENS);
+  'screen-select','screen-history','screen-practice'].concat(MAIN_SCREENS);
 const THEME_CLASSES = REGION_ORDER.map(id => 'theme-' + id);
 
 let current = null;          // выбранный регион (объект из CULTURES)
@@ -56,7 +56,22 @@ function assetUrl(v){
 }
 
 /* ---------- навигация ---------- */
-function go(id){
+let restoringRoute = false;
+
+function go(id, details = {}){
+  const route = { id, ...details };
+  const previous = history.state?.cultureRoute;
+  if(!restoringRoute && id !== 'screen-splash' && JSON.stringify(previous) !== JSON.stringify(route)){
+    const state = { cultureRoute:route, depth:previous ? history.state.depth + 1 : 0 };
+    if(previous) history.pushState(state, '');
+    else history.replaceState(state, '');
+  }
+  const active = document.querySelector('.screen.active')?.id;
+  if(id !== active){
+    if(active === 'screen-practice') stopPractice();
+    if(active === 'screen-exercise') clearInterval(timerInterval);
+    if(active === 'screen-task') stopLegacyTask();
+  }
   if(NEUTRAL_SCREENS.includes(id)){
     document.body.classList.remove(...THEME_CLASSES);
     document.getElementById('app').classList.remove(...THEME_CLASSES);
@@ -73,6 +88,37 @@ function go(id){
   }
   window.scrollTo({top:0, behavior:'instant'});
 }
+
+function restoreRoute(state){
+  const route = state?.cultureRoute;
+  if(!route) return;
+  restoringRoute = true;
+  try{
+    switch(route.id){
+      case 'screen-cabinet': openCabinet(); break;
+      case 'screen-train': openPracticeLibrary(route.filter); break;
+      case 'screen-stats': openStats(); break;
+      case 'screen-me': openMe(); break;
+      case 'screen-welcome': openWelcome(); break;
+      case 'screen-about': openAbout(); break;
+      case 'screen-profile': buildProfile(Boolean(route.edit && loadProfile())); break;
+      case 'screen-goal': openGoal(route.fromSettings); break;
+      case 'screen-practice': openPractice(route.practice, { filter:route.filter, demo:route.demo, complete:route.complete }); break;
+      case 'screen-intro': route.region ? openCulture(route.region, route.from) : openTraining(); break;
+      case 'screen-history': openHistory(); break;
+      case 'screen-select': go('screen-select'); break;
+      case 'screen-results': current && session.results.length ? go('screen-results') : openTraining(); break;
+      case 'screen-exercise': route.region ? openCulture(route.region, route.from) : openTraining(); break;
+      case 'screen-task':
+      case 'screen-taskresult': openTraining(); break;
+      case 'screen-demo-result': openWelcome(); break;
+      default: loadProfile() ? openCabinet() : openWelcome();
+    }
+  } finally{
+    restoringRoute = false;
+  }
+}
+window.addEventListener('popstate', event => restoreRoute(event.state));
 
 function showStep(id){
   document.querySelectorAll('#screen-exercise > div[id^="step-"]').forEach(s=>s.classList.add('hidden'));
@@ -123,7 +169,7 @@ function startExercise(){
   session.plan = buildPlan(current.exercises);
   document.getElementById('explain-title').innerHTML = 'Не знаешь <span class="accent">' + current.langAdj + '</span>?<br>Это нормально.';
   renderMascot('explain-mascot', current.id, 'glasses');
-  go('screen-exercise');
+  go('screen-exercise', { region:current.id, from:cultureFrom });
   showStep('step-explain');
 }
 

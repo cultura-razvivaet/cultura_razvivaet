@@ -76,7 +76,7 @@ function safeStore(name){ try{ return window[name]; }catch(e){ return null; } }
 /* ---- профиль: { nick, avatar, goal } ---- */
 function loadProfile(){
   const p = readJSON(safeStore('localStorage'), PROFILE_KEY, null);
-  return p && p.nick ? p : null;
+  return p && p.nick ? { ...p, avatar:avatarOption(p.avatar).file } : null;
 }
 function saveProfile(p){ return writeJSON(safeStore('localStorage'), PROFILE_KEY, p); }
 function clearProfile(){ try{ localStorage.removeItem(PROFILE_KEY); }catch(e){} }
@@ -153,4 +153,27 @@ function recordCultureSession(regionId, result){
   s.log = s.log.slice(0, 30);
   touchStreak(s);
   saveStats(s);
+}
+
+/* Завершённые практики хранятся отдельно от результатов прежнего банка. */
+function practiceStats(stats = loadStats()){
+  return stats.practice || { counts:{}, days:{}, last:null };
+}
+
+function recordPractice(item){
+  const stats = loadStats();
+  const practice = practiceStats(stats);
+  const today = dayKey();
+  practice.counts[item.skill] = (practice.counts[item.skill] || 0) + 1;
+  practice.days[today] = (practice.days[today] || 0) + 1;
+  practice.last = item.id;
+  stats.practice = practice;
+  if(saveStats(stats)){
+    window.dispatchEvent(new CustomEvent('practice:recorded', { detail:practice }));
+  }
+}
+
+function practiceLevel(stats = practiceStats()){
+  const days = Object.keys(stats.days).length;
+  return REGION_LEVELS.filter(level => days >= level.days).length;
 }

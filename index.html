@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Культура развивает — тренируй мозг, открывай культуру</title>
-<link rel="icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/design2.css">
+<link rel="stylesheet" href="css/practice.css">
 </head>
 <body>
 
@@ -26,30 +26,29 @@
     </div>
   </section>
 
-  <!-- ЗНАКОМСТВО (интро с постепенным появлением) -->
-  <section class="screen screen-neutral" id="screen-welcome">
-    <div class="deco-circle deco--w1"></div><div class="deco-circle deco-fill deco--w2"></div>
-    <div class="topbar"><div class="brand brand--lab">Культура развивает <span>by CULTLAB</span></div></div>
-    <div class="welcome">
-      <div class="welcome-hero">
-        <h1 class="home-title">Тренируй мозг<br>Открывай культуру</h1>
-        <div class="heading-mascot" id="welcome-mascot"></div>
-      </div>
-      <p class="reveal lede-big">Логические задачи на основе языков и традиций народов России.</p>
-      <div class="reveal fact-grid" id="welcome-facts"></div>
-      <div class="reveal gate" id="welcome-gate">
-        <h2 class="gate-title">А ты готов тренироваться?</h2>
-        <button class="btn-primary btn-yes" id="welcome-yes" type="button">Да!</button>
-      </div>
-      <div class="after-gate hidden" id="welcome-after">
-        <p class="reveal lede-big">Память, внимание, логика, творчество — <b>9 навыков и сотни заданий</b>.<br>Сначала попробуем пару заданий.</p>
-        <div class="reveal try-row">
-          <span class="deco-btn"><button class="btn-primary btn-try" id="welcome-try" type="button">Попробовать</button></span>
-          <div class="try-mascot" id="welcome-mascot2"></div>
-        </div>
-      </div>
+<!-- ЗНАКОМСТВО (интро с постепенным появлением) -->
+<section class="screen screen-neutral" id="screen-welcome">
+  <div class="topbar"><div class="brand brand--lab">Культура развивает <span>by CULTLAB</span></div></div>
+  <div class="welcome">
+    <div class="welcome-hero">
+      <h1 class="home-title">Тренируй мозг<br>Открывай культуру</h1>
+      <div class="heading-mascot" id="welcome-mascot"></div>
     </div>
-  </section>
+    <p class="reveal lede-big">Короткие упражнения для перерыва и знакомства с культурами народов России.</p>
+    <div class="reveal fact-grid" id="welcome-facts"></div>
+    <div class="reveal gate" id="welcome-gate">
+      <h2 class="gate-title">А ты готов тренироваться?</h2>
+      <button class="btn-primary btn-yes" id="welcome-yes" type="button">Да!</button>
+    </div>
+    <div class="after-gate hidden" id="welcome-after">
+      <p class="reveal lede-big">В каталоге <b>40 упражнений</b> для короткой паузы. Начни с одного.</p>
+      <div class="reveal try-row">
+        <button class="btn-primary btn-try" id="welcome-try" type="button">Попробовать</button>
+      </div>
+      <p class="subscription-text"><strong>7 дней бесплатно, далее 100 рублей в месяц</strong></p>
+    </div>
+  </div>
+</section>
 
   <!-- ЗАДАНИЕ (демо и тренировка) -->
   <section class="screen screen-neutral" id="screen-task">
@@ -94,35 +93,70 @@
   </section>
 
   <!-- О ПРОЕКТЕ + КАРТА -->
-  <section class="screen screen-neutral main-screen" id="screen-about">
-    <div class="user-head" id="about-head"></div>
-    <h1 class="task-title">О проекте</h1>
-    <p class="task-q about-lede">«Культура развивает» — тренажёр для мозга, в котором упражнения построены на языках, традициях, еде и орнаментах народов России. Ты тренируешь память, внимание и логику — и заодно знакомишься с культурой.</p>
-    <h2 class="section-title">Как это работает?</h2>
-    <p class="task-q">Культура становится материалом твоей тренировки.</p>
-    <ol class="about-steps">
-      <li><span class="num">01</span><b>Узнай язык</b><small>Короткое знакомство с языком региона: как звучат слова, что они значат.</small></li>
-      <li><span class="num">02</span><b>Запомни слова</b><small>Слова и выражения становятся материалом для тренировки памяти.</small></li>
-      <li><span class="num">03</span><b>Играй</b><small>Задания на память, внимание и логику: орнаменты, рецепты, последовательности, вопросы.</small></li>
-      <li><span class="num">04</span><b>Открой культуру</b><small>После заданий — результат по трём навыкам и то, что нового ты узнал о культуре.</small></li>
-    </ol>
-    <h2 class="section-title">Что внутри</h2>
-    <ul class="about-list">
-      <li><b>Культуры России.</b> Пять небольших заданий про татар, карелов, калмыков и якутов (народ саха). Выбери культуру из списка или на карте ниже.</li>
-      <li><b>Тренировки.</b> Девять категорий, около 500 заданий: концентрация внимания, образное и вербальное мышление, решение проблем, память, гибкость ума, принятие решений, творчество и умение учиться.</li>
-      <li><b>Три уровня.</b> Базовый, средний и продвинутый. Новые уровни открываются, когда ты набираешь опыт.</li>
-      <li><b>Помощник.</b> После задания он говорит, что получилось хорошо, что улучшить, и подсказывает, что потренировать дальше.</li>
-      <li><b>Прогресс.</b> Уровень, серия дней и статистика по категориям — в личном кабинете.</li>
-    </ul>
-    <p class="task-q">Регистрация не нужна: ник, иконка и весь прогресс хранятся только в твоём браузере.</p>
-    <h2 class="section-title">Карта регионов</h2>
-    <p class="task-q">Цветные регионы — с тестами. Нажми на регион, чтобы начать.</p>
-    <div class="map-wrap">
-      <div class="map-box" id="map-box"></div>
-      <div class="map-tip" id="map-tip" role="status" aria-live="polite"></div>
-    </div>
-    <div class="map-legend" id="map-legend"></div>
-  </section>
+<!-- КАРТА + СТИХОТВОРЕНИЕ -->
+<section class="screen screen-neutral main-screen" id="screen-about">
+  <div class="user-head" id="about-head"></div>
+  
+  <!-- Карта регионов -->
+  <h2 class="section-title">Карта регионов</h2>
+  <p class="task-q">Цветные регионы — с тестами. Нажми на регион, чтобы начать.</p>
+  <div class="map-wrap">
+    <div class="map-box" id="map-box"></div>
+    <div class="map-tip" id="map-tip" role="status" aria-live="polite"></div>
+  </div>
+  <div class="map-legend" id="map-legend"></div>
+
+  <!-- Стихотворение -->
+  <div class="poem-text">
+    <p>В многоголосье языков,<br>
+    В узорах линий на костюмах<br>
+    В полотнах песен и стихов,<br>
+    В горах, лесах, песчаных дюнах<br>
+    Хранится истинное чудо,<br>
+    Творится новая глава<br>
+    Национального этюда,<br>
+    И повторяются слова,<br>
+    Слова со свойственной фактурой,<br>
+    Что облик подчеркнуть должны<br>
+    Народов с вековой культурой,<br>
+    Культурой общей для страны.</p>
+
+    <p>Культура – это просвещение,<br>
+    Искусство, творчество, талант<br>
+    Сокровищница достижений,<br>
+    Вплетенных в древний фолиант.</p>
+
+    <p>Культура – это сочетание<br>
+    Традиций, ценностей и норм,<br>
+    Что концентрирует внимание<br>
+    В палитре необычных форм.</p>
+
+    <p>Культура в каждом развивает<br>
+    Мышление, память, кругозор,<br>
+    Принять решение помогает<br>
+    И открывает новый взор<br>
+    На ценности родного края,<br>
+    На праздники большой страны,<br>
+    Где наряду с калмыцким чаем<br>
+    Предложат буузы и блины,<br>
+    Где землю угостят кумысом<br>
+    На праздник лета Ысыах,<br>
+    Накормят чепалгаш и мясом<br>
+    В деревне высоко в горах,<br>
+    Чак-чак где станет угощеньем<br>
+    На праздник плуга Сабантуй,<br>
+    На Масленицу - блин с вареньем,<br>
+    Хуплу дадут на Акатуй,<br>
+    Где все традиции не рядом,<br>
+    А вместе придают черты<br>
+    России сильной, дружной, славной,<br>
+    Страны, где вырос я и ты.<br>
+    В России множество народов<br>
+    Живут бок о бок, как семья,<br>
+    И мы поймем без перевода:<br>
+    Россия – Родина моя!</p>
+  </div>
+</section>
 
   <!-- РЕЗУЛЬТАТ ДЕМО -->
   <section class="screen screen-neutral" id="screen-demo-result">
@@ -138,9 +172,8 @@
 
   <!-- ПРОФИЛЬ: ник и иконка -->
   <section class="screen screen-neutral" id="screen-profile">
-    <div class="deco-circle deco--w1"></div><div class="deco-circle deco-fill deco--w2"></div>
     <div class="topbar">
-      <button class="back-link back-btn hidden" id="profile-back" type="button" onclick="openCabinet()">← Назад</button>
+      <button class="back-link back-btn hidden" id="profile-back" type="button" onclick="openMe()">← Назад</button>
       <div class="brand brand--lab" id="profile-brand">Культура развивает <span>by CULTLAB</span></div>
     </div>
     <form class="center-card form-card" id="profile-form" novalidate>
@@ -175,8 +208,8 @@
     <div class="user-head" id="cabinet-head"></div>
     <div class="dash dash--home" id="cabinet-dash"></div>
     <div id="cabinet-reco"></div>
-    <h2 class="section-title">Категории:</h2>
-    <div class="cat-grid" id="cabinet-cats"></div>
+    <h2 class="section-title">Упражнения по навыкам</h2>
+    <div class="stats-skills" id="cabinet-cats"></div>
   </section>
 
   <!-- ТРЕНИРОВКИ (основной экран) -->
@@ -186,8 +219,8 @@
     <div class="train-top">
       <div class="train-left">
         <div class="train-cultures">
-          <div class="tc-text"><h2>Культуры России</h2><p>Татарстан | Карелия | Калмыкия | Якутия</p></div>
-          <button class="btn-play" type="button" onclick="go('screen-select')">Играть</button>
+          <div class="tc-text"><h2>Культуры России</h2><p>Упражнения на основе культур народов России</p></div>
+          <button class="btn-play" type="button" onclick="openPracticeLibrary('regions')">Открыть</button>
         </div>
         <div id="train-reco"></div>
       </div>
@@ -198,18 +231,41 @@
     </div>
     <h2 class="section-title">Сегодня:</h2>
     <div class="carousel" id="train-carousel" role="region" aria-label="Карточки дня"></div>
-    <div class="cat-pills" id="train-pills" role="group" aria-label="Категории"></div>
+    <div id="train-catalog"></div>
+  </section>
+
+  <section class="screen screen-neutral" id="screen-practice">
+    <div class="topbar"><button type="button" class="back-link back-btn" id="practice-back">← Назад</button></div>
+    <div class="task-wrap practice-wrap">
+      <div class="kicker" id="practice-meta"></div>
+      <h1 class="task-title" id="practice-title"></h1>
+      <p class="task-q" id="practice-instructions"></p>
+      <div class="practice-widget" id="practice-widget"></div>
+      <p id="practice-feedback" class="task-feedback" role="status"></p>
+      <div class="task-actions">
+        <button type="button" class="btn-ghost" id="practice-skip">Пропустить</button>
+        <button type="button" class="btn-primary" id="practice-action">Готово</button>
+      </div>
+    </div>
   </section>
 
   <!-- СТАТИСТИКА -->
   <section class="screen screen-neutral main-screen" id="screen-stats">
     <div class="user-head" id="stats-head"></div>
-    <h1 class="task-title">Статистика</h1>
-    <div class="dash" id="stats-dash"></div>
-    <h2 class="section-title">По категориям</h2>
-    <div class="stat-list" id="stats-cats"></div>
-    <h2 class="section-title">Последние задания</h2>
-    <ul class="log-list" id="stats-log"></ul>
+    <h1 class="stats-intro">Развивай мозг. Открывай культуру.</h1>
+    <div id="stats-levels" class="stats-levels" aria-label="Уровни"></div>
+    <div class="stats-overview">
+      <div id="stats-radar" class="stats-radar"></div>
+      <section class="practice-panel" aria-labelledby="practice-summary-title">
+        <h2 id="practice-summary-title">Моя практика</h2>
+        <div class="practice-totals" id="practice-totals"></div>
+        <table class="practice-table">
+          <thead><tr><th scope="col">Упражнения по навыкам</th><th scope="col">Выполнено</th></tr></thead>
+          <tbody id="practice-tallies"></tbody>
+        </table>
+      </section>
+    </div>
+    <div class="stats-skills" id="stats-skills"></div>
   </section>
 
   <!-- ПРОФИЛЬ (просмотр) -->
@@ -229,8 +285,19 @@
         <button class="btn-ghost" type="button" onclick="openGoal(true)">Изменить цель</button>
       </div>
     </div>
-    <button class="friend-btn" type="button" id="friend-btn"><span class="fb-dots" aria-hidden="true"></span><span>Тренироваться с другом</span></button>
-    <p class="friend-soon" id="friend-soon" role="status"></p>
+    <button class="friend-btn" type="button" id="friend-btn" aria-haspopup="dialog"><span class="fb-dots" aria-hidden="true"></span><span>Тренироваться с другом</span></button>
+    <dialog class="friend-dialog" id="friend-dialog" aria-labelledby="friend-title">
+      <form class="friend-heading" method="dialog">
+        <h2 id="friend-title">Ссылка для друга</h2>
+        <button class="friend-dismiss" type="submit" aria-label="Закрыть">×</button>
+      </form>
+      <p>Отправь другу ссылку на «Культура развивает».</p>
+      <p class="friend-local" id="friend-local" hidden>Сейчас сайт открыт по локальному адресу. Друг сможет открыть ссылку после публикации сайта.</p>
+      <label class="sr-only" for="friend-url">Адрес сайта</label>
+      <input id="friend-url" class="task-input" type="url" readonly>
+      <button class="btn-primary" type="button" id="friend-copy">Скопировать ссылку</button>
+      <div id="friend-status" class="friend-status" role="status"></div>
+    </dialog>
     <div class="settings">
       <label class="check-row"><input type="checkbox" id="set-fx"> Звуки нажатий и ответов</label>
     </div>
@@ -456,6 +523,7 @@
 <script src="js/map-regions.js"></script>
 <script src="js/icons.js"></script>
 <script src="js/content/categories.js"></script>
+<script src="js/content/practice.js"></script>
 <script src="js/content/bank.js"></script>
 <script src="js/mascots.js"></script>
 <script src="js/storage.js"></script>
@@ -480,6 +548,8 @@
 <script src="js/tasks/creative.js"></script>
 <script src="js/tasks/learning.js"></script>
 <script src="js/map.js"></script>
+<script src="js/practice.js"></script>
+<script src="js/practice-puzzles.js"></script>
 <script src="js/screens.js"></script>
 <script src="js/main.js"></script>
 </body>

@@ -272,7 +272,7 @@ function completeTask(res){
     return;
   }
   recordTask(trainer.cat, trainer.task.id, res.ok);
-  setTimeout(showTaskResult, 700);
+  trainer.resultTimeout = setTimeout(showTaskResult, 700);
 }
 
 function onTaskSkip(){
@@ -290,8 +290,11 @@ function advanceDemo(){
   if(trainer.demo.index < trainer.demo.list.length - 1){ trainer.demo.index++; showDemoTask(); }
   else finishDemo();
 }
+function stopLegacyTask(){
+  clearInterval(trainer.timerId); clearInterval(trainer.cdId); clearTimeout(trainer.resultTimeout);
+}
 function closeTask(){
-  clearInterval(trainer.timerId); clearInterval(trainer.cdId);
+  stopLegacyTask();
   if(trainer.mode === 'demo') go('screen-welcome'); else openTraining();
 }
 

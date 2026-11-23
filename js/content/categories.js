@@ -21,30 +21,29 @@ const CATEGORIES = [
 /* Цели для экрана «С чего хочешь начать?». categories — какие
    категории рекомендуем под эту цель. */
 const GOALS = [
-  { id:'memory',   name:'Память',            icon:'brain',     desc:'Запоминать быстрее и надежнее',       categories:['memory','learning'] },
-  { id:'focus',    name:'Концентрация',      icon:'target',    desc:'Дольше удерживать внимание',          categories:['attention'] },
-  { id:'speed',    name:'Скорость мышления', icon:'zap',       desc:'Быстрее находить решения',            categories:['flex','verbal'] },
-  { id:'logic',    name:'Логика',            icon:'puzzle',    desc:'Решать задачи шаг за шагом',          categories:['problem','visual'] },
-  { id:'creative', name:'Креативность',      icon:'sparkles',  desc:'Находить необычные идеи',             categories:['creative','flex'] },
-  { id:'calm',     name:'Снижение стресса',  icon:'leaf',      desc:'Упражнения для паузы и отдыха',      categories:['attention','creative'] },
+  { id:'memory',   name:'Память',           icon:'brain',   desc:'Повторять последовательности и искать пары', categories:['memory'] },
+  { id:'focus',    name:'Внимание',         icon:'target',  desc:'Замечать детали и переключать взгляд',      categories:['attention'] },
+  { id:'logic',    name:'Логика',           icon:'puzzle',  desc:'Решать головоломки в своём темпе',           categories:['logic'] },
+  { id:'coordination', name:'Координация',  icon:'shuffle', desc:'Выполнять упражнения для рук',               categories:['coordination'] },
+  { id:'rhythm',   name:'Слух и ритм',      icon:'music',   desc:'Прислушиваться к звукам и повторять ритм',    categories:['rhythm'] },
+  { id:'calm',     name:'Передышка',        icon:'leaf',    desc:'Делать короткие паузы',                      categories:['attention','coordination'] },
 ];
 
-/* Иконки профиля: файлы из assets/ (или ссылки). Добавляйте/
-   заменяйте строки — выбор на экране профиля обновится сам. */
+/* Иконки профиля. Прежние имена сопоставляются при загрузке. */
 const AVATARS = [
-  { file:'avatar-1.png', label:'Оранжевый' },
-  { file:'avatar-2.png', label:'Розовый' },
-  { file:'avatar-3.png', label:'Коралловый' },
-  { file:'avatar-4.png', label:'Синий' },
-  { file:'avatar-5.png', label:'Нежный' },
-  { file:'avatar-6.png', label:'Зелёный' },
-  { file:'avatar-7.png', label:'Лиловый' },
+  { file:'avatar-1.svg', label:'Жёлтый треугольник', colors:['#F7941D','#C05819'] },
+  { file:'avatar-2.svg', label:'Розовый овал', colors:['#E62B6F','#A93A95'] },
+  { file:'avatar-4.svg', label:'Бирюзовая звезда', colors:['#4DA3CA','#1F235A'] },
+  { file:'avatar-6.svg', label:'Зелёный лист', colors:['#9CCF4A','#3F7A2A'] },
+  { file:'avatar-7.svg', label:'Лиловая молния', colors:['#B58CF0','#6A4FD0'] },
 ];
-/* Цвета SVG-заглушки иконки, если PNG не загрузился (по порядку AVATARS). */
-const AVATAR_FALLBACK_COLORS = [
-  ['#F7941D','#C05819'], ['#E62B6F','#A93A95'], ['#F37564','#FAA223'],
-  ['#4DA3CA','#1F235A'], ['#ECC9E0','#F8A48A'], ['#9ccf4a','#3f7a2a'], ['#b58cf0','#6a4fd0'],
-];
+
+function avatarOption(file){
+  // Два прежних аватара без прямых аналогов переходят на близкие по цвету.
+  const replaced = { 'avatar-3.png':'avatar-1.svg', 'avatar-5.png':'avatar-2.svg' };
+  const svg = replaced[file] || (typeof file === 'string' ? file.replace(/\.png$/, '.svg') : null);
+  return AVATARS.find(avatar => avatar.file === svg) || AVATARS[0];
+}
 
 /* Научные факты и «миф или правда» для блока внизу «Основного экрана».
    Факт:  { text }

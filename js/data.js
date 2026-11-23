@@ -185,4 +185,8 @@ const REGION_ORDER = Object.keys(CULTURES);
 
 /* Картинки нейтрального маскота (главная, «Как это работает?», результат).
    Пример: { cap:'neutral-cap.png', flex:'https://…/flex.png' } */
-const NEUTRAL_MASCOTS = {};
+const NEUTRAL_MASCOTS = {
+  cap:'mascot-neutral-cap.svg',
+  flex:'mascot-neutral-flex.svg',
+  group:'mascot-neutral-group.svg',
+};
