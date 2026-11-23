@@ -146,6 +146,7 @@ function fillHeader(task){
   const demo = trainer.mode === 'demo';
   taskEl('task-kicker').textContent = demo ? 'Задание ' + (trainer.demo.index + 1) + ' из ' + trainer.demo.list.length : (cat ? cat.name : '');
   taskEl('task-title').textContent = demo ? 'Попробуй прямо сейчас' : exName(task.ex);
+  renderPracticeGuide('task-guide', practiceGuideFor({ id:task.ex, skill:task.cat }));
   const lv = taskEl('task-level');
   lv.hidden = demo; lv.textContent = LEVELS[task.lvl] || ''; lv.className = 'level-badge lvl' + task.lvl;
   taskEl('task-back').innerHTML = icon('arrowLeft', 18) + '<span>' + (demo ? 'Назад' : 'К упражнениям') + '</span>';

@@ -168,3 +168,31 @@
   .look-timer.running::after,.breathing-circle{animation:none;transition:none}
   .look-timer.running::after{transform:scaleX(1)}
 }
+
+/* Проводник в задании и показ движения */
+.practice-header{display:grid;grid-template-columns:minmax(0,1fr) clamp(62px,13vw,120px);align-items:start;gap:clamp(8px,2vw,22px)}
+.practice-guide{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain}
+.practice-header .task-q{margin-bottom:0}
+.gesture-figure{width:min(100%,540px);margin:0;overflow:hidden;border:1px solid #d8ddf2;border-radius:20px;background:#f7f8fe}
+.gesture-figure img{display:block;width:100%;height:auto}
+.gesture-figure figcaption{display:grid;grid-template-columns:1fr 1fr;padding:0 10px 12px;text-align:center;font-weight:750;font-size:clamp(12px,2.6vw,15px);color:#353c84}
+.gesture-instructions{width:min(100%,540px);display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}
+.gesture-instructions div{background:#fff;border:1px solid #dfe3f4;padding:10px 12px;border-radius:12px}
+.gesture-instructions dt{font-weight:750;color:var(--lav-accent)}
+.gesture-instructions dd{margin:4px 0 0;font-size:clamp(12px,2.8vw,14px);line-height:1.48}
+
+/* Стихотворение и единая иллюстрация */
+body:has(#screen-about.active){overflow-x:clip}
+.poem-layout{display:grid;grid-template-columns:minmax(240px,.7fr) minmax(0,1.1fr);align-items:start;gap:clamp(22px,4vw,64px);margin-top:clamp(30px,5vw,65px)}
+.poem-text{grid-column:1;grid-row:1;min-width:0;font-size:clamp(14px,1.08vw,18px);line-height:1.57;color:#232940}
+.poem-text p{margin:0 0 1.15em}
+.poem-text p:last-child{margin-bottom:0}
+.poem-figure{grid-column:2;grid-row:1;position:sticky;top:calc(var(--nav-h) + 14px);margin:0;overflow:hidden;border-radius:clamp(14px,2vw,24px);background:#e1e6f3}
+.poem-figure img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain}
+@media (min-width:1280px){.poem-figure{top:24px}}
+@media (max-width:760px){
+  .poem-layout{display:flex;flex-direction:column;gap:18px}
+  .poem-figure{z-index:2;top:var(--nav-h);width:100%;border-radius:0 0 14px 14px;background:linear-gradient(135deg,#e0eff7,#f7e5ee);box-shadow:0 5px 12px #4b4f7417}
+  .poem-figure img{height:clamp(134px,25svh,218px);aspect-ratio:auto}
+  .poem-text{font-size:clamp(14px,3.85vw,16px);line-height:1.64}
+}

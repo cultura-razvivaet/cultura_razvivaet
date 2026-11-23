@@ -58,9 +58,9 @@
     <div class="after-gate hidden" id="welcome-after">
       <p class="reveal lede-big">В каталоге <b>40 упражнений</b> для короткой паузы. Начни с одного.</p>
       <div class="reveal try-row">
-        <button class="btn-primary btn-try" id="welcome-try" type="button">Попробовать</button>
+        <button class="btn-primary btn-try" id="welcome-try" type="button" aria-describedby="trial-offer">Попробовать</button>
+        <p class="subscription-text" id="trial-offer">7 дней бесплатно, далее 100 рублей в месяц</p>
       </div>
-      <p class="subscription-text"><strong>7 дней бесплатно, далее 100 рублей в месяц</strong></p>
     </div>
   </div>
 </section>
@@ -73,9 +73,14 @@
     </div>
     <div class="task-wrap">
       <div class="progress" id="task-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><div class="progress-fill" id="task-progress-fill"></div></div>
-      <div class="kicker" id="task-kicker"></div>
-      <h1 class="task-title" id="task-title"></h1>
-      <span class="level-badge" id="task-level" hidden></span>
+      <div class="practice-header">
+        <div class="practice-header-copy">
+          <div class="kicker" id="task-kicker"></div>
+          <h1 class="task-title" id="task-title"></h1>
+          <span class="level-badge" id="task-level" hidden></span>
+        </div>
+        <img class="practice-guide" id="task-guide" width="120" height="120" alt="">
+      </div>
       <p class="task-q" id="task-q"></p>
       <div class="task-stage" id="task-stage"></div>
       <div class="task-feedback" id="task-feedback" role="status" aria-live="polite"></div>
@@ -121,8 +126,12 @@
   </div>
   <div class="map-legend" id="map-legend"></div>
 
-  <!-- Стихотворение -->
-  <div class="poem-text">
+  <article class="poem-layout" aria-label="Стихотворение «Культура развивает»">
+    <figure class="poem-figure">
+      <img src="assets/poem-cultures.webp" width="1120" height="1400" loading="lazy"
+        alt="Река соединяет голубой Татарстан, зелёную Якутию, золотую Карелию, оранжевую Калмыкию, красную Бурятию и розовую Чукотку.">
+    </figure>
+    <div class="poem-text">
     <p>В многоголосье языков,<br>
     В узорах линий на костюмах<br>
     В полотнах песен и стихов,<br>
@@ -170,7 +179,8 @@
     Живут бок о бок, как семья,<br>
     И мы поймем без перевода:<br>
     Россия – Родина моя!</p>
-  </div>
+    </div>
+  </article>
 </section>
 
   <!-- РЕЗУЛЬТАТ ДЕМО -->
@@ -208,7 +218,6 @@
 
   <!-- ЦЕЛЬ -->
   <section class="screen screen-neutral" id="screen-goal">
-    <div class="deco-circle deco--w1"></div><div class="deco-circle deco-fill deco--w3"></div>
     <div class="topbar"><div class="brand brand--lab">Культура развивает <span>by CULTLAB</span></div></div>
     <div class="center-card wide">
       <h1 class="task-title">С чего начнем?</h1>
@@ -252,9 +261,14 @@
   <section class="screen screen-neutral" id="screen-practice">
     <div class="topbar"><button type="button" class="back-link back-btn" id="practice-back">← Назад</button></div>
     <div class="task-wrap practice-wrap">
-      <div class="kicker" id="practice-meta"></div>
-      <h1 class="task-title" id="practice-title"></h1>
-      <p class="task-q" id="practice-instructions"></p>
+      <div class="practice-header">
+        <div class="practice-header-copy">
+          <div class="kicker" id="practice-meta"></div>
+          <h1 class="task-title" id="practice-title"></h1>
+          <p class="task-q" id="practice-instructions"></p>
+        </div>
+        <img class="practice-guide" id="practice-guide" width="120" height="120" alt="">
+      </div>
       <div class="practice-widget" id="practice-widget"></div>
       <p id="practice-feedback" class="task-feedback" role="status"></p>
       <div class="task-actions">

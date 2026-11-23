@@ -35,6 +35,7 @@ function openPractice(id, options = {}){
   $('practice-meta').textContent = (item.region ? PRACTICE_REGIONS[item.region] : skillById(item.skill).name) + ' · ' + item.duration;
   $('practice-title').textContent = item.title;
   $('practice-instructions').textContent = item.instruction;
+  renderPracticeGuide('practice-guide', practiceGuideFor(item));
   $('practice-back').onclick = $('practice-skip').onclick = () => leavePractice(route);
   $('practice-skip').hidden = route.complete;
   main.hidden = false;
@@ -79,6 +80,7 @@ function openPractice(id, options = {}){
 function showPracticeComplete(route){
   stopPractice();
   $('practice-instructions').textContent = 'Практика завершена.';
+  renderPracticeGuide('practice-guide', 'done');
   $('practice-widget').replaceChildren();
   $('practice-feedback').textContent = '';
   $('practice-skip').hidden = true;
@@ -344,7 +346,34 @@ function runePractice(item, api){
   api.stage.append(h('p', 'practice-note', 'Учебные строки для ритма речи. Хлопай на отмеченных ударениях.'));
 }
 
+function renderGoatScissors(item, api){
+  const demo = h('figure', 'gesture-figure');
+  demo.innerHTML = '<img width="540" height="288" alt=""><figcaption><span>Левая рука</span><span>Правая рука</span></figcaption>';
+  const img = demo.querySelector('img');
+  const controls = h('div', 'practice-inline gesture-controls');
+  controls.setAttribute('role', 'group');
+  controls.setAttribute('aria-label', 'Показ жестов');
+  const modes = [
+    ['Анимация', 'goat-scissors.gif', 'Руки одновременно обмениваются жестами «Коза» и «Ножницы».'],
+    ['Первая поза', 'goat-scissors-first.png', 'Левая рука показывает «козу», правая — «ножницы».'],
+    ['Вторая поза', 'goat-scissors-second.png', 'Левая рука показывает «ножницы», правая — «козу».'],
+  ];
+  const buttons = modes.map(([label], index) => practiceButton(label, () => show(index), 'practice-choice'));
+  function show(index){
+    const [,file,description] = modes[index];
+    img.src = assetUrl(file);
+    img.alt = description;
+    buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+  }
+  controls.append(...buttons);
+  api.stage.append(demo, controls, h('dl', 'gesture-instructions',
+    '<div><dt>Коза</dt><dd>Выпрями указательный и мизинец. Средний и безымянный прижми большим.</dd></div>' +
+    '<div><dt>Ножницы</dt><dd>Разведи указательный и средний буквой V. Остальные прижми большим.</dd></div>'));
+  show(matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 0);
+}
+
 const PRACTICE_RENDERERS = {
+  'goat-scissors':renderGoatScissors,
   color:renderColor,
   shape:(item, api) => prompts(api, shuffle([['Круг',null,'○'], ['Квадрат',null,'□'], ['Треугольник',null,'△']]), { doneLabel:'Нашёл' }),
   letter:(item, api) => prompts(api, shuffle([...'АВЕКМНОРСТ']).slice(0,3), { doneLabel:'Нашёл' }),

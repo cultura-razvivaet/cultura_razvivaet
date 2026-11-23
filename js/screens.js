@@ -206,7 +206,7 @@ function cabinetDashHTML(){
   return '<div class="lvl2-card"><div class="lvl2-left"><b class="lvl2-title">Уровень</b>' +
     '<div class="lvl-row"><b class="lvl2-num">' + level + '</b>' +
     '<div class="progress" role="progressbar" aria-label="Следующий уровень" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>' +
-    '<small>' + (next ? days + ' / ' + next.days + ' дней практики' : 'Все уровни открыты') + '</small></div>' +
+    '<small>' + (next ? days + ' / ' + next.days + ' ' + ruPlural(next.days, 'день', 'дня', 'дней') + ' практики' : 'Все уровни открыты') + '</small></div>' +
     '<div class="lvl2-region"><b>' + esc(PRACTICE_REGIONS[region.id]) + '</b><span>' + esc(REGION_NATIVE[region.id] || '') + '</span></div>' + art + '</div>' +
     '<div class="today-card"><div class="today-title">Сделано <span>сегодня</span></div><b class="today-num">' + (stats.days[dayKey()] || 0) + '</b><small>Упражнений</small></div>';
 }
@@ -426,7 +426,7 @@ function initScreens(){
     if(event.key === STATS_KEY || event.key === null) renderPracticeStats();
   });
   $('welcome-yes').addEventListener('click', onWelcomeYes);
-  $('welcome-try').addEventListener('click', () => openPractice('color', { demo:true }));
+  $('welcome-try').addEventListener('click', () => openPractice(TRIAL_PRACTICE.id, { demo:true }));
   $('demo-go').addEventListener('click', afterDemo);
   $('profile-form').addEventListener('submit', onProfileSubmit);
   $('profile-nick').addEventListener('input', ()=>{ $('profile-error').textContent = ''; validateProfile(); });

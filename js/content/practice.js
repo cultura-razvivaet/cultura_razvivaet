@@ -63,12 +63,16 @@ const PRACTICE_REGIONS = {
 };
 const REGION_LEVELS = [
   { id:'tatar', days:0, bg:'#bfe4f5' },
-  { id:'yakutia', days:11, bg:'#cfe9c0' },
+  { id:'yakutia', days:3, bg:'#cfe9c0' },
   { id:'karelia', days:31, bg:'#f6e3a8' },
   { id:'kalmykia', days:71, bg:'#fbd0a0' },
   { id:'buryatia', days:101, bg:'#f5a9a0' },
   { id:'chukotka', days:201, bg:'#f6b7dc' },
 ];
-const practiceById = id => PRACTICES.find(item => item.id === id);
+const TRIAL_PRACTICE = {
+  id:'goat-scissors', skill:'coordination', block:'hands', title:'Коза — ножницы', duration:'1–2 мин',
+  instruction:'Подними обе руки ладонями к себе. Покажи левой рукой «козу», правой «ножницы». Поменяй жесты на обеих руках одновременно. Сделай шесть смен в удобном темпе.',
+};
+const practiceById = id => id === TRIAL_PRACTICE.id ? TRIAL_PRACTICE : PRACTICES.find(item => item.id === id);
 const skillById = id => PRACTICE_SKILLS.find(skill => skill.id === id);
 const regionArt = id => assetUrl('streak-' + id + '.webp');

@@ -141,3 +141,22 @@ function renderMascot(containerId, region, pose){
   probe.src = src;
 }
 
+
+/* В каждом задании используется поза, подходящая к его действию. */
+const GUIDE_BY_SKILL = {
+  attention:'search', visual:'search', memory:'memory', logic:'logic', problem:'logic',
+  decision:'logic', coordination:'hands', rhythm:'rhythm', verbal:'culture',
+  flex:'hands', creative:'art', learning:'culture',
+};
+const GUIDE_BY_PRACTICE = {
+  breathing:'breath', steppe:'breath', bridge:'breath', window:'breath',
+  mirror:'art', tulip:'art', paint:'art', dots:'art', pattern:'art', khokhloma:'art',
+  rune:'culture', 'ring-road':'culture', koresh:'culture', kantele:'rhythm',
+};
+function practiceGuideFor(item){
+  return GUIDE_BY_PRACTICE[item.id] || GUIDE_BY_SKILL[item.skill] || 'culture';
+}
+function renderPracticeGuide(containerId, pose){
+  const picture = document.getElementById(containerId);
+  if(picture) picture.src = assetUrl('guide-' + pose + '.png');
+}
