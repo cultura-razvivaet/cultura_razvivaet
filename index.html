@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Культура развивает — тренируй мозг, открывай культуру</title>
-<link rel="icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -98,14 +97,6 @@
     <div class="user-head" id="about-head"></div>
     <h1 class="task-title">О проекте</h1>
     <p class="task-q about-lede">«Культура развивает» — тренажёр для мозга, в котором упражнения построены на языках, традициях, еде и орнаментах народов России. Ты тренируешь память, внимание и логику — и заодно знакомишься с культурой.</p>
-    <h2 class="section-title">Карта регионов</h2>
-    <p class="task-q">Цветные регионы — с тестами. Нажми на регион, чтобы начать.</p>
-    <div class="map-wrap">
-      <div class="map-box" id="map-box"></div>
-      <div class="map-tip" id="map-tip" role="status" aria-live="polite"></div>
-    </div>
-    <div class="map-legend" id="map-legend"></div>
-
     <h2 class="section-title">Как это работает?</h2>
     <p class="task-q">Культура становится материалом твоей тренировки.</p>
     <ol class="about-steps">
@@ -123,6 +114,13 @@
       <li><b>Прогресс.</b> Уровень, серия дней и статистика по категориям — в личном кабинете.</li>
     </ul>
     <p class="task-q">Регистрация не нужна: ник, иконка и весь прогресс хранятся только в твоём браузере.</p>
+    <h2 class="section-title">Карта регионов</h2>
+    <p class="task-q">Цветные регионы — с тестами. Нажми на регион, чтобы начать.</p>
+    <div class="map-wrap">
+      <div class="map-box" id="map-box"></div>
+      <div class="map-tip" id="map-tip" role="status" aria-live="polite"></div>
+    </div>
+    <div class="map-legend" id="map-legend"></div>
   </section>
 
   <!-- РЕЗУЛЬТАТ ДЕМО -->
@@ -174,7 +172,7 @@
   <!-- ЛИЧНЫЙ КАБИНЕТ -->
   <section class="screen screen-neutral main-screen" id="screen-cabinet">
     <div class="user-head" id="cabinet-head"></div>
-    <div class="dash" id="cabinet-dash"></div>
+    <div class="dash dash--home" id="cabinet-dash"></div>
     <div id="cabinet-reco"></div>
     <h2 class="section-title">Категории:</h2>
     <div class="cat-grid" id="cabinet-cats"></div>
@@ -216,17 +214,24 @@
   <!-- ПРОФИЛЬ (просмотр) -->
   <section class="screen screen-neutral main-screen" id="screen-me">
     <div class="user-head" id="me-head"></div>
-    <div class="center-card">
-      <div class="avatar-big" id="me-avatar"></div>
-      <h1 class="task-title" id="me-nick"></h1>
-      <p class="task-q" id="me-goal"></p>
-      <div class="settings">
-        <label class="check-row"><input type="checkbox" id="set-fx"> Звуки нажатий и ответов</label>
+    <div class="me-card">
+      <div class="me-top">
+        <div class="avatar-big" id="me-avatar"></div>
+        <div class="me-info">
+          <h1 class="me-nick"><span id="me-nick"></span><span class="me-lvl" id="me-lvl" title="Уровень">1</span></h1>
+          <p class="me-goal-label">Моя цель:</p>
+          <p class="me-goal" id="me-goal"></p>
+        </div>
       </div>
-      <div class="task-actions">
+      <div class="me-actions">
         <button class="btn-ghost" type="button" onclick="openProfileEdit()">Изменить ник и иконку</button>
         <button class="btn-ghost" type="button" onclick="openGoal(true)">Изменить цель</button>
       </div>
+    </div>
+    <button class="friend-btn" type="button" id="friend-btn"><span class="fb-dots" aria-hidden="true"></span><span>Тренироваться с другом</span></button>
+    <p class="friend-soon" id="friend-soon" role="status"></p>
+    <div class="settings">
+      <label class="check-row"><input type="checkbox" id="set-fx"> Звуки нажатий и ответов</label>
     </div>
   </section>
 
